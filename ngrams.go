@@ -18,12 +18,12 @@ type Ngram struct {
     count int
 }
 
-/* 
-	unigramHistogram:- 
-		Desciption- Reads the corpus,and tokenizes it. 
-		From the tokens generates a unigram model, which is then sorted 
+/*
+	unigramHistogram:-
+		Desciption- Reads the corpus,and tokenizes it.
+		From the tokens generates a unigram model, which is then sorted
 		for rank, and then ploted to chart which is saved in histogram.png.
-		Run this function for solution to b. of assignment 2. 
+		Run this function for solution to b. of assignment 2.
 */
 func unigramHistogram() {
 	var tokens [][]string = ReadFile()
@@ -33,11 +33,11 @@ func unigramHistogram() {
 }
 
 /*
-	randomWalk:- 
+	randomWalk:-
 		Input- A list of lists which contain tokenized strings
 		Output- A sequence of random sentences generated from the different N-grams(1-6)
 		Desciption- This function performs a random walk on different N-gram models
-		to generate sentences. It first interpolates the current N-gram for the <s> tag. 
+		to generate sentences. It first interpolates the current N-gram for the <s> tag.
 		Once found, it tries to find the word which is most likely to follow that sequence of characters.
 		By iteratively querying the model, we generate a sequence of tokens which have been seen together.
 		Solution for the d. part of assignment 2 is given here.
@@ -127,7 +127,7 @@ func randomWalk(tokens [][]string) {
 		with the <\s> following it, to the count of the number of times that N-gram has occured
 		That is the N-gram count for (X,<\s>) to the (N-1)-gram count of X.
 		Desciption- This code iterates over all N-grams(1-6) to see which ones contain the X<\s>
-		token, then if they do, we display the count of that N-gram and query the N-1-gram for 
+		token, then if they do, we display the count of that N-gram and query the N-1-gram for
 		count of X. This is the solution to a. from the Assignment
 */
 func estimateEndProbabilities(tokens [][]string) {
@@ -136,7 +136,7 @@ func estimateEndProbabilities(tokens [][]string) {
 	var ngrams []map[string] int
 	for n := 1; n<= 6; n++ {
 		var count int = 0
-		ngrams = append(ngrams,buildNGram(tokens,n)) 
+		ngrams = append(ngrams,buildNGram(tokens,n))
 		for k,v := range ngrams[n-1] {
 			var temp = strings.Split(k," ")
 			if(strings.EqualFold(temp[len(temp)-1],"<\\s>" )) {
@@ -147,12 +147,12 @@ func estimateEndProbabilities(tokens [][]string) {
 				}
 			}
 		}
-		fmt.Printf("Count: %d",count);	
+		fmt.Printf("Count: %d",count);
 	}
 }
 
 /*
-	plotEndFrequencies - 
+	plotEndFrequencies -
 	Output - Figures generated with the corrosponding N-grams are numbered as histogramN.png
 	Description - This function reads the tokens from the file, and for all N-grams (2-6),
 	generates a plot for all elements that end with <\s>. The code searches through the N-grams
@@ -179,13 +179,13 @@ func plotEndFrequencies() {
 }
 
 /*
-	TokenizeSentences :- 
+	TokenizeSentences :-
 	Description -
 		Uses smart Heuristics to split sentences. Replaces "." which follows abbriviations with <p>, and reorders
-		sentences within quotes to be more flexible to splitting. Splits on <end> symbol, to give new sentences. 
+		sentences within quotes to be more flexible to splitting. Splits on <end> symbol, to give new sentences.
 */
 func TokenizeSentences() [][]string {
-	dat, err := ioutil.ReadFile("The Adventures of Sherlock Holmes.txt")
+	dat, err := ioutil.ReadFile("Corpora/The Adventures of Sherlock Holmes.txt")
     if err != nil {
         panic(err)
     }
@@ -265,8 +265,8 @@ func sortNGrams(ngram map[string] int) []float64 {
     return groupA
 }
 /*
-	buildNgram - Iterates over tokens to produce different N-grams. Returns a map of String to Int representing 
-	N-gram to count pairs. 
+	buildNgram - Iterates over tokens to produce different N-grams. Returns a map of String to Int representing
+	N-gram to count pairs.
 */
 func buildNGram(tokens [][]string, n int) map[string] int {
 	var ngram = make(map[string] int)
@@ -298,7 +298,7 @@ func sortStructNgram(ngram map[string] int) []Ngram{
 			sortedNgrams = append(sortedNgrams,temp)
 			//fmt.Printf("%s %d\n",s,k)
 		}
-		//fmt.Printf("Done")		
+		//fmt.Printf("Done")
     }
     //fmt.Printf("Out")
     return sortedNgrams
