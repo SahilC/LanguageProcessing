@@ -48,9 +48,9 @@ func ProcessLine(line string, regularexp string) []string {
 	var search = regexp.MustCompile(regularexp)
     for _, m := range search.FindAllString(line, -1) {
         matches = append(matches, string(m))
-        fmt.Printf(string(m)+",")
+        //fmt.Printf(string(m)+",")
     }
-	fmt.Printf("\n")
+	//fmt.Printf("\n")
 	//fmt.Printf("%#v",matches)
 	return matches
 }
