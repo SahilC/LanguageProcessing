@@ -77,7 +77,3 @@ func ReadFile() [][]string {
     }
     return tokens
 }
-
-func main() {
-	ReadFile()
-}
