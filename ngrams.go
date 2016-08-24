@@ -245,6 +245,27 @@ func drawHistogram(fileName string, values []float64) {
 /*
 	sortNGrams - Returns a list of values sorted in terms of frequencies
 */
+
+func sortFloatNGrams(ngram map[string] float64) []float64 {
+	groupA := make([]float64,0)
+    n := map[float64][]string{}
+    var a []float64
+    for k, v := range ngram {
+        n[v] = append(n[v], k)
+    }
+    for k := range n {
+        a = append(a, k)
+    }
+    sort.Sort(sort.Reverse(sort.Float64Slice(a)))
+	for _, k := range a {
+		// for _,s := range n[k] {
+		// 	fmt.Printf("%s %d\n",s,k)
+		// }
+        groupA = append(groupA,float64(k))
+    }
+    return groupA
+}
+
 func sortNGrams(ngram map[string] int) []float64 {
 	groupA := make([]float64,0)
     n := map[int][]string{}

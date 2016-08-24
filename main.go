@@ -14,5 +14,7 @@ func main() {
 	// 	fmt.Printf("%d:%s\n",v,k);
 	// }
 	//fmt.Printf(text)
-	GoodTuring(tokens)
+	var ngram map[string] float64 = GoodTuring(tokens)
+	var sorted = sortFloatNGrams(ngram)
+	drawHistogram("histogram",sorted)
 }

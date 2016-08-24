@@ -4,7 +4,7 @@ import ("io/ioutil"
         "strings"
         "regexp"
         "html"
-        "fmt"
+        //"fmt"
 )
 /*
 	GetRegex :-
