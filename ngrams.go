@@ -184,8 +184,8 @@ func plotEndFrequencies() {
 		Uses smart Heuristics to split sentences. Replaces "." which follows abbriviations with <p>, and reorders
 		sentences within quotes to be more flexible to splitting. Splits on <end> symbol, to give new sentences.
 */
-func TokenizeSentences() [][]string {
-	dat, err := ioutil.ReadFile("Corpora/The Adventures of Sherlock Holmes.txt")
+func TokenizeSentences(filename string) [][]string {
+	dat, err := ioutil.ReadFile(filename)
     if err != nil {
         panic(err)
     }

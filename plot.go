@@ -8,7 +8,7 @@ import (
     "github.com/gonum/plot/vg"
 )
 
-func PlotLogLog(vals []float64) {
+func PlotLogLog(vals []float64,filename string) {
     pts := make(plotter.XYs, len(vals))
     for i, k := range vals {
         pts[i].X = math.Log(float64(i+1))
@@ -20,9 +20,9 @@ func PlotLogLog(vals []float64) {
         panic(err)
     }
 
-    p.Title.Text = "Plotutil example"
-    p.X.Label.Text = "X"
-    p.Y.Label.Text = "Y"
+    p.Title.Text = "Log-Log plot of Frequency v/s Rank"
+    p.X.Label.Text = "Rank"
+    p.Y.Label.Text = "Frequency"
 
     err = plotutil.AddLinePoints(p,
         "First", pts)
@@ -31,7 +31,7 @@ func PlotLogLog(vals []float64) {
     }
 
     // Save the plot to a PNG file.
-    if err := p.Save(4*vg.Inch, 4*vg.Inch, "points.png"); err != nil {
+    if err := p.Save(4*vg.Inch, 4*vg.Inch, filename+".png"); err != nil {
         panic(err)
     }
 }
