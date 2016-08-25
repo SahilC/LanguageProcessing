@@ -12,8 +12,14 @@ func bucketNgrams(ngram map[string] int) map[int] int {
 func GoodTuring(ngram map[string] int) map[string] float64 {
     var frequecy_distribution map[int] int = bucketNgrams(ngram)
     var smooth_ngram = make(map[string] float64)
+    i := 0
     for k,v := range ngram {
-        smooth_ngram[k] = float64(v+1)*(float64(frequecy_distribution[v+1])/float64(frequecy_distribution[v]))
+        if(i <= 10) {
+            smooth_ngram[k] = float64(v+1)*(float64(frequecy_distribution[v+1])/float64(frequecy_distribution[v]))
+        } else {
+            smooth_ngram[k] = float64(v)
+        }
+        i += 1
         // fmt.Printf("%s:%0.2f\n",k,smooth_ngram[k])
     }
     return smooth_ngram
