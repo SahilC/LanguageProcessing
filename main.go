@@ -16,5 +16,6 @@ func main() {
 	//fmt.Printf(text)
 	var ngram map[string] float64 = GoodTuring(tokens)
 	var sorted = sortFloatNGrams(ngram)
-	drawHistogram("histogram",sorted)
+	//drawHistogram("histogram",sorted)
+	PlotLogLog(sorted)
 }
