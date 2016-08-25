@@ -247,7 +247,7 @@ func drawHistogram(fileName string, values []float64) {
 */
 
 func sortFloatNGrams(ngram map[string] float64) []float64 {
-	groupA := make([]float64,0)
+	//groupA := make([]float64,0)
     n := map[float64][]string{}
     var a []float64
     for k, v := range ngram {
@@ -257,13 +257,13 @@ func sortFloatNGrams(ngram map[string] float64) []float64 {
         a = append(a, k)
     }
     sort.Sort(sort.Reverse(sort.Float64Slice(a)))
-	for _, k := range a {
-		// for _,s := range n[k] {
-		// 	fmt.Printf("%s %d\n",s,k)
-		// }
-        groupA = append(groupA,float64(k))
-    }
-    return groupA
+	// for _, k := range a {
+	// 	// for _,s := range n[k] {
+	// 	// 	fmt.Printf("%s %d\n",s,k)
+	// 	// }
+    //     groupA = append(groupA,float64(k))
+    // }
+    return a
 }
 
 func sortNGrams(ngram map[string] int) []float64 {
