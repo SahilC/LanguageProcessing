@@ -33,17 +33,17 @@ func PlotLogLog(vals [][]float64,filename string, labels []string) {
     //     }
     //
     // }
-    err = plotutil.AddLinePoints(p,"First", ProcessPoint(vals[0]),
-                                    "Second",ProcessPoint(vals[1]),
-                                    "Third", ProcessPoint(vals[2]),
-                                    "Fourth", ProcessPoint(vals[3]),
-                                    "Fifth", ProcessPoint(vals[4]),
-                                    "Sixth", ProcessPoint(vals[5]))
+    err = plotutil.AddLinePoints(p,"Sherlock Holmes", ProcessPoint(vals[0]),
+                                    "Alice in Wonderland",ProcessPoint(vals[1]),
+                                    "Shakespear's works", ProcessPoint(vals[2]),
+                                    "Persuasion", ProcessPoint(vals[3]),
+                                    "Siddaratha", ProcessPoint(vals[4]),
+                                    "Twitter", ProcessPoint(vals[5]))
     if err != nil {
         panic(err)
     }
     // Save the plot to a PNG file.
-    if err := p.Save(5*vg.Inch, 5*vg.Inch, filename+".png"); err != nil {
+    if err := p.Save(5*vg.Inch, 6*vg.Inch, filename+".png"); err != nil {
         panic(err)
     }
 }

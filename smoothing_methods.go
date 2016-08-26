@@ -14,7 +14,7 @@ func GoodTuring(ngram map[string] int) map[string] float64 {
     var smooth_ngram = make(map[string] float64)
     i := 0
     for k,v := range ngram {
-        if(i <= 10) {
+        if(i <= 5) {
             smooth_ngram[k] = float64(v+1)*(float64(frequecy_distribution[v+1])/float64(frequecy_distribution[v]))
         } else {
             smooth_ngram[k] = float64(v)
