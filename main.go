@@ -35,8 +35,9 @@ func main() {
 	// //reader := bufio.NewReader(os.Stdin)
 	// //fmt.Printf("Enter Sentence to be Evaluated:\n")
 	// //text, _ := reader.ReadString('\n')
-	// filename := "Corpora/pg105.txt"
-	// var tokens map[string] int = buildNGram(TokenizeSentences(filename),6)
+	//  filename := "Corpora/pg105.txt"
+	//  var tokens map[string] int = buildNGram(TokenizeSentences(filename),3)
+	//  estimateSentenceProbability(tokens)
 	// // for k,v := range tokens {
 	// // 	fmt.Printf("%d:%s\n",v,k);
 	// // }
