@@ -4,7 +4,7 @@ import ("io/ioutil"
         "strings"
         "regexp"
         "html"
-        //"fmt"
+        "fmt"
 )
 /*
 	GetRegex :-
@@ -76,4 +76,14 @@ func ReadFile() [][]string {
     	tokens = append(tokens,matches)
     }
     return tokens
+}
+
+func ReadBrown() {
+    corpus_location := "/home/sahil/nltk_data/corpora/brown"
+    files, _ := ioutil.ReadDir(corpus_location)
+    for _, f := range files {
+        dat,_ := ioutil.ReadFile(corpus_location+"/"+f.Name())
+        sentences := strings.Split(string(dat),"\n")
+        //fmt.Println("%#v",sentences)
+    }
 }
