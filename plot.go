@@ -43,7 +43,7 @@ func PlotLogLog(vals [][]float64,filename string, labels []string) {
         panic(err)
     }
     // Save the plot to a PNG file.
-    if err := p.Save(5*vg.Inch, 6*vg.Inch, filename+".png"); err != nil {
+    if err := p.Save(7*vg.Inch, 6*vg.Inch, filename+".png"); err != nil {
         panic(err)
     }
 }

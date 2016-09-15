@@ -23,15 +23,15 @@ func WalkCorpora() {
 			//fmt.Printf(text)
 			var ngram map[string] float64 = GoodTuring(tokens)
 			var sorted = sortFloatNGrams(ngram)
+			drawHistogram(f.Name(),sorted)
 			vals = append(vals,sorted)
 			//var sorted = sortNGrams(tokens)
-			//drawHistogram("histogram",sorted)
     }
 	PlotLogLog(vals,"Multiplot",filenames)
 }
 
 func main() {
-	WalkCorpora()
+	//WalkCorpora()
 	// //reader := bufio.NewReader(os.Stdin)
 	// //fmt.Printf("Enter Sentence to be Evaluated:\n")
 	// //text, _ := reader.ReadString('\n')
