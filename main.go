@@ -31,6 +31,7 @@ func WalkCorpora() {
 }
 
 func main() {
+	ReadBrown()
 	//WalkCorpora()
 	// //reader := bufio.NewReader(os.Stdin)
 	// //fmt.Printf("Enter Sentence to be Evaluated:\n")

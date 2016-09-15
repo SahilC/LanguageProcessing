@@ -81,9 +81,20 @@ func ReadFile() [][]string {
 func ReadBrown() {
     corpus_location := "/home/sahil/nltk_data/corpora/brown"
     files, _ := ioutil.ReadDir(corpus_location)
+    tokens := make([][]string,0)
     for _, f := range files {
-        dat,_ := ioutil.ReadFile(corpus_location+"/"+f.Name())
-        sentences := strings.Split(string(dat),"\n")
-        //fmt.Println("%#v",sentences)
+        if(f.Name() != "README") {
+            dat,_ := ioutil.ReadFile(corpus_location+"/"+f.Name())
+            regularexp := GetRegex()
+            //fmt.Printf(string(dat))
+            s := strings.Split(string(dat),"\n")
+            matches := make([]string, 0, 2000)
+            for _,i := range s {
+            	matches = ProcessLine(html.UnescapeString(i),regularexp)
+            	matches = append(matches,"<\\s>")
+                fmt.Println("%#v",matches)
+            	tokens = append(tokens,matches)
+            }
+        }
     }
 }
