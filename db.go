@@ -38,7 +38,28 @@ func InsertTokens(tokens []string) {
 	}
 }
 
-func InsertNgram(tokens []string, n int) {
+func InsertWordPosgram(tokens []string) {
+    maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("wordPosgram")
+	for j := 0; j < len(tokens); j++ {
+
+        var temp = strings.Split(tokens[j],"/")
+        if(len(temp) > 1) {
+            posTag := temp[1]
+            word := temp[0]
+            //fmt.Printf("%s %s\n",posTag,word)
+            pos.Upsert(bson.M{"posTag":posTag,"word":word},bson.M{"$inc": bson.M{"count": 1}})
+        }
+	}
+}
+
+func InsertPOSNgram(tokens []string, n int) {
     maxWait := time.Duration(5 * time.Second)
     session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
 	if err != nil {
@@ -47,32 +68,15 @@ func InsertNgram(tokens []string, n int) {
     defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
     pos := session.DB("nlprokz").C("posTags")
-    // wordTags := session.DB("nlprokz").C("wordTags")
 	for j := 0; j < (len(tokens) - n); j++ {
-		//ngram[strings.Join(tokens[k][j:j+n]," ")] += 1
-        // var temp = strings.Split(tokens[j],"/")
-        // word := temp[0]
-        // posTag := temp[1]
         posSeq := make([]string,0)
-        //wordTagSeq := make([]string,0)
         for a := 0; a < n; a++ {
             var temp = strings.Split(tokens[j+a],"/")
-            //word := temp[0]
-            //fmt.Printf("%s %#v\n",tokens[j],temp)
             if(len(temp) > 1) {
                 posSeq = append(posSeq,temp[1])
             }
-            //posSeq = append(posSeq,posTag)
         }
         pos.Upsert(&Ngrams{Ngram:strings.Join(posSeq," ")},bson.M{"$inc": bson.M{"count": 1}})
-        //fmt.Printf("%s\n",)
-        //fmt.Printf("===============\n")
-        //posSeq := strings.Join(tokens[j:j+n]," ")
-        //err = pos.Insert(&Ngram{Ngram: tokens,count:count Timestamp: time.Now()})
-
-    	// if err != nil {
-    	// 	panic(err)
-    	// }
 	}
 }
 // func main() {

@@ -95,7 +95,8 @@ func ReadBrown() {
                 if(len(matches) > 1) {
                     matches = append(matches,"<\\s>/ends")
                     //InsertTokens(matches)
-                    InsertNgram(matches,2)
+                    //InsertPOSNgram(matches,2)
+                    InsertWordPosgram(matches)
                     // fmt.Println(len(matches))
                     // fmt.Println("%v",matches)
                 }
