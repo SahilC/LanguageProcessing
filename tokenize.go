@@ -93,7 +93,6 @@ func ReadBrown() {
             for _,i := range s {
             	matches = ProcessLine(html.UnescapeString(i),regularexp)
                 if(len(matches) > 1) {
-                    matches = append(matches,"<\\s>")
                     InsertTokens(matches)
                     fmt.Println(len(matches))
                     fmt.Println("%v",matches)

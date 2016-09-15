@@ -15,7 +15,8 @@ type Tokens struct {
 }
 
 func InsertTokens(tokens []string) {
-    session, err := mgo.Dial("127.0.0.1")
+    maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
 	if err != nil {
 		panic(err)
 	}
