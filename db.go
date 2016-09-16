@@ -18,8 +18,21 @@ type Tokens struct {
 type Ngrams struct {
 	ID        bson.ObjectId `bson:"_id,omitempty"`
 	Ngram      string
-	count     int
+	Count     int
 	Timestamp time.Time
+}
+
+type PosWordGram struct {
+	ID        bson.ObjectId `bson:"_id,omitempty"`
+	PosTag      string		"posTag"
+	Word		string
+	Count     int
+}
+
+type PosUniGram struct {
+	ID        bson.ObjectId `bson:"_id,omitempty"`
+	PosTag      string		"posTag"
+	Count     int
 }
 
 func InsertTokens(tokens []string) {
@@ -122,6 +135,66 @@ func InsertPOSNgram(tokens []string, n int) {
         }
         pos.Upsert(&Ngrams{Ngram:strings.Join(posSeq," ")},bson.M{"$inc": bson.M{"count": 1}})
 	}
+}
+
+func getPosgram(posGram string) int {
+	maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("posTags")
+	results := Ngrams{}
+	pos.Find(bson.M{"ngram": posGram}).One(&results)
+	//fmt.Printf("%#v",results.Count)
+	return results.Count
+}
+
+func getWordPosgram(word string) []PosWordGram {
+	maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("wordPosgram")
+	var results []PosWordGram
+	pos.Find(bson.M{"word":word}).All(&results)
+	// fmt.Printf("%#v",results)
+	return results
+}
+
+func getWordPosgramCount(word string) []PosWordGram {
+	maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("wordPosgram")
+	var results []PosWordGram
+	pos.Find(bson.M{"word":word}).All(&results)
+	// fmt.Printf("%#v",results)
+	return results
+}
+
+func getAllPosUnigrams() []PosUniGram {
+	maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("posUnigram")
+	var results []PosUniGram
+	pos.Find(bson.M{}).All(&results)
+	// fmt.Printf("%#v",results)
+	return results
 }
 // func main() {
 //

@@ -45,7 +45,7 @@ func GetRegex() string {
 func ProcessLine(line string, regularexp string) []string {
 	//fmt.Printf(line)
 	var matches = make([]string, 0, 2000)
-	matches = append(matches,"<s>/starts")
+	matches = append(matches,"<s>")
 	var search = regexp.MustCompile(regularexp)
     for _, m := range search.FindAllString(line, -1) {
         matches = append(matches, string(m))
