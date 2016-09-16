@@ -211,7 +211,7 @@ func getAllPosUnigrams() []PosUniGram {
 	return results
 }
 
-func getFrequencyAggregation() []bson.M {
+func getFrequencyAggregation(dbName string) map[int] int {
 	maxWait := time.Duration(5 * time.Second)
     session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
 	if err != nil {
@@ -219,7 +219,7 @@ func getFrequencyAggregation() []bson.M {
 	}
     defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-    pos := session.DB("nlprokz").C("posTags")
+    pos := session.DB("nlprokz").C(dbName)
 	result := []bson.M{}
 	pos.Pipe([]bson.M{bson.M{"$match": bson.M{}},bson.M{"$group":bson.M{"_id":"$count","count":bson.M{"$sum":1}}},bson.M{"$sort":bson.M{"count":-1}}}).All(&result)
 	//fmt.Printf("%v",len(result))
@@ -228,8 +228,8 @@ func getFrequencyAggregation() []bson.M {
 		//fmt.Printf("%v\n",i["_id"])
 		results[i["_id"].(int)] = i["count"].(int)
 	}
-	fmt.Printf("%v",len(results))
-	return result
+	//fmt.Printf("%v",len(results))
+	return results
 }
 // func main() {
 //
