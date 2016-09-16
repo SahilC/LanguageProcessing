@@ -91,7 +91,11 @@ func InsertPOSNgram(tokens []string, n int) {
         for a := 0; a < n; a++ {
             var temp = strings.Split(tokens[j+a],"/")
             if(len(temp) > 1) {
-                posSeq = append(posSeq,temp[1])
+                posTag := temp[len(temp)-1]
+                if(strings.Contains(posTag,"-")) {
+                    posTag = strings.Split(posTag,"-")[0]
+                }
+                posSeq = append(posSeq,posTag)
             }
         }
         pos.Upsert(&Ngrams{Ngram:strings.Join(posSeq," ")},bson.M{"$inc": bson.M{"count": 1}})
