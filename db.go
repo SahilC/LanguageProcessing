@@ -210,6 +210,21 @@ func getAllPosUnigrams() []PosUniGram {
 	// fmt.Printf("%#v",results)
 	return results
 }
+
+func getFrequencyAggregation() []bson.M {
+	maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("posTags")
+	result := []bson.M{}
+	pos.Pipe([]bson.M{bson.M{"$match": bson.M{}},bson.M{"$group":bson.M{"_id":"$count","count":bson.M{"$sum":1}}},bson.M{"$sort":bson.M{"count":-1}}}).All(&result)
+	//fmt.Printf("%v",len(result))
+	return result
+}
 // func main() {
 //
 //
