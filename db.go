@@ -223,6 +223,12 @@ func getFrequencyAggregation() []bson.M {
 	result := []bson.M{}
 	pos.Pipe([]bson.M{bson.M{"$match": bson.M{}},bson.M{"$group":bson.M{"_id":"$count","count":bson.M{"$sum":1}}},bson.M{"$sort":bson.M{"count":-1}}}).All(&result)
 	//fmt.Printf("%v",len(result))
+	results := make(map[int] int,len(result))
+	for _,i := range result {
+		//fmt.Printf("%v\n",i["_id"])
+		results[i["_id"].(int)] = i["count"].(int)
+	}
+	fmt.Printf("%v",len(results))
 	return result
 }
 // func main() {
