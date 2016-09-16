@@ -32,11 +32,38 @@ func processWord(word string,posUnigrams []PosUniGram, previous []float64) []flo
 
 func processTag(tag string,posUnigrams []PosUniGram,val float64,previous []float64) []float64 {
     next := make([]float64,82)
+    i := 0
     for idx,j := range posUnigrams {
+            i += 1
             count := getPosgram( tag+" "+j.PosTag)
             //fmt.Printf("%.2f %.2f\n",math.Log(float64(count)) - math.Log(float64(j.Count)) + val,previous[idx])
             //next[idx] = math.Max(math.Log(float64(count)) - math.Log(float64(j.Count)) + val,previous[idx])
             next[idx] = math.Max(float64(count)*val/float64(j.Count),previous[idx])
+    }
+    //fmt.Printf("%v\n",i)
+    return next
+}
+
+func fastProcessTag(tag string,posUnigrams []PosUniGram,val float64,previous []float64) []float64 {
+    next := make([]float64,82)
+    list := make([]string,82)
+    for idx,j := range posUnigrams {
+        list[idx] =  tag+" "+j.PosTag
+    }
+    result := getAllPosgram(list)
+    i := 0
+    for idx,j := range posUnigrams {
+        change := true
+        for _,k := range result {
+            if (k.Ngram == (tag+" "+j.PosTag)) {
+                i += 1
+                next[idx] = math.Max(float64(k.Count)*val/float64(j.Count),previous[idx])
+                change = false
+            }
+        }
+        if(change) {
+            next[idx] = math.Max(0,previous[idx])
+        }
     }
     //fmt.Printf("%v\n",next)
     return next
@@ -58,15 +85,14 @@ func viterbi(sentence string) {
     previous = processWord(tokens[1],values,previous)
     fmt.Printf("POS:%s\n",printMaxTag(values,previous))
     for _,i := range tokens[2:len(tokens)-1] {
-        //fmt.Printf("======================%s\n",i)
         for idx,j := range values {
-            next = processTag(j.PosTag,values,previous[idx],next)
+            next = fastProcessTag(j.PosTag,values,previous[idx],next)
+            //next = processTag(j.PosTag,values,previous[idx],next)
+            //fmt.Printf("%v\n",next)
+            //fmt.Printf("============================\n")
         }
-        // if(i == "a") {
-        //     fmt.Printf("%v",next)
-        // }
         next = processWord(i,values,next)
-        //fmt.Printf("POS:%s\n",printMaxTag(values,next))
+        fmt.Printf("POS:%s\n",printMaxTag(values,next))
         //fmt.Printf("%v",next)
         previous = next
         next = make([]float64,82)
