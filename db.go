@@ -88,15 +88,37 @@ func InsertPOSNgram(tokens []string, n int) {
     pos := session.DB("nlprokz").C("posTags")
 	for j := 0; j < (len(tokens) - n); j++ {
         posSeq := make([]string,0)
+        otherSeq := make([]string,0)
         for a := 0; a < n; a++ {
             var temp = strings.Split(tokens[j+a],"/")
             if(len(temp) > 1) {
                 posTag := temp[len(temp)-1]
+                if(strings.Index(posTag,"+") != -1 && strings.Index(posTag,"+") != (len(posTag)-1)  ) {
+                    temp = strings.Split(posTag,"+")
+                    if(len(temp[1]) > 1 || temp[1] != "*") {
+                        //pos.Upsert(bson.M{"posTag":temp[1]},bson.M{"$inc": bson.M{"count": 1}})
+                        if (len(posSeq) == 1) {
+                            pos.Upsert(&Ngrams{Ngram:posSeq[0]+" "+temp[1]},bson.M{"$inc": bson.M{"count": 1}})
+                            if(len(otherSeq) == 1) {
+                                fmt.Printf("%s----------",otherSeq[0]+otherSeq[1])
+                                pos.Upsert(&Ngrams{Ngram:otherSeq[0]+" "+otherSeq[1]},bson.M{"$inc": bson.M{"count": 1}})
+                            }
+                        } else {
+                            otherSeq = append(otherSeq,temp[1])
+                        }
+                    }
+                    posTag = temp[0]
+                }
                 if(strings.Contains(posTag,"-")) {
                     posTag = strings.Split(posTag,"-")[0]
                 }
                 posSeq = append(posSeq,posTag)
             }
+        }
+        if (len(otherSeq) == 1 && len(posSeq) > 1) {
+            // fmt.Printf("%v\n",tokens)
+            // fmt.Printf("%s++++++++++\n",otherSeq[0]+posSeq[1])
+            pos.Upsert(&Ngrams{Ngram:otherSeq[0]+" "+posSeq[1]},bson.M{"$inc": bson.M{"count": 1}})
         }
         pos.Upsert(&Ngrams{Ngram:strings.Join(posSeq," ")},bson.M{"$inc": bson.M{"count": 1}})
 	}
