@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
     "strings"
     "time"
 	"gopkg.in/mgo.v2"
@@ -47,13 +47,31 @@ func InsertWordPosgram(tokens []string) {
     defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
     pos := session.DB("nlprokz").C("wordPosgram")
+    //pos := session.DB("nlprokz").C("posUnigram")
 	for j := 0; j < len(tokens); j++ {
 
         var temp = strings.Split(tokens[j],"/")
         if(len(temp) > 1) {
-            posTag := temp[1]
+            posTag := temp[len(temp)-1]
+            if(strings.Index(posTag,"+") != -1 && strings.Index(posTag,"+") != (len(posTag)-1)  ) {
+                temp = strings.Split(posTag,"+")
+                if(len(temp[1]) > 1 || temp[1] != "*") {
+                    pos.Upsert(bson.M{"posTag":temp[1]},bson.M{"$inc": bson.M{"count": 1}})
+                }
+                posTag = temp[0]
+            }
+            if(strings.Contains(posTag,"-")) {
+                posTag = strings.Split(posTag,"-")[0]
+            }
             word := temp[0]
-            //fmt.Printf("%s %s\n",posTag,word)
+            if(len(temp) > 2) {
+                word = strings.Join(temp[0:len(temp)-1],"/")
+                fmt.Println("%s------------%s\n",tokens,word)
+            }
+            // if(strings.Contains(posTag,"-") ||strings.Contains(posTag,"+") || len(posTag) < 1 || posTag == "*") {
+            //     fmt.Printf("%#v\n",tokens)
+            // }
+
             pos.Upsert(bson.M{"posTag":posTag,"word":word},bson.M{"$inc": bson.M{"count": 1}})
         }
 	}
