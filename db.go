@@ -114,7 +114,7 @@ func InsertPOSNgram(tokens []string, n int) {
                             pos.Upsert(&Ngrams{Ngram:posSeq[0]+" "+temp[1]},bson.M{"$inc": bson.M{"count": 1}})
                             if(len(otherSeq) == 1) {
                                 fmt.Printf("%s----------",otherSeq[0]+otherSeq[1])
-                                pos.Upsert(&Ngrams{Ngram:otherSeq[0]+" "+otherSeq[1]},bson.M{"$inc": bson.M{"count": 1}})
+                                pos.Upsert(bson.M{"ngram":otherSeq[0]+" "+otherSeq[1]},bson.M{"$inc": bson.M{"count": 1}})
                             }
                         } else {
                             otherSeq = append(otherSeq,temp[1])
@@ -131,9 +131,11 @@ func InsertPOSNgram(tokens []string, n int) {
         if (len(otherSeq) == 1 && len(posSeq) > 1) {
             // fmt.Printf("%v\n",tokens)
             // fmt.Printf("%s++++++++++\n",otherSeq[0]+posSeq[1])
-            pos.Upsert(&Ngrams{Ngram:otherSeq[0]+" "+posSeq[1]},bson.M{"$inc": bson.M{"count": 1}})
+            pos.Upsert(bson.M{"ngram":otherSeq[0]+" "+posSeq[1]},bson.M{"$inc": bson.M{"count": 1}})
         }
-        pos.Upsert(&Ngrams{Ngram:strings.Join(posSeq," ")},bson.M{"$inc": bson.M{"count": 1}})
+		if(len(posSeq) > 1) {
+        	pos.Upsert(bson.M{"ngram":strings.Join(posSeq," ")},bson.M{"$inc": bson.M{"count": 1}})
+		}
 	}
 }
 

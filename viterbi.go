@@ -1,6 +1,7 @@
 package main
 import (
     "fmt"
+    "strings"
     "math"
 )
 func printMaxTag(posUnigrams []PosUniGram,previous []float64) string {
@@ -83,14 +84,17 @@ func fastProcessTag(tag string,val float64,unseen_prob float64, posUnigrams []Po
     return next
 }
 
-func viterbi(sentence string) {
+func viterbi(sentence string) []string {
+    posTags := make([]string,0)
     previous := make([]float64,82)
     next := make([]float64,82)
     regularexp := GetRegex()
-    tokens := ProcessLine(sentence,regularexp)
+    tokens := ProcessLines(sentence,regularexp)
     tokens = append(tokens,"<\\s>")
+    fmt.Printf("%s\n",strings.Join(tokens," "))
     values := getAllPosUnigrams()
     tag := "starts"
+
     // to-do change this to a dynamic query for total
     unseen_tag_prob := getPOSUnseen("posTags",1045943)
     unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
@@ -101,21 +105,16 @@ func viterbi(sentence string) {
         previous[idx] = float64(count)/float64(j.Count)
     }
     previous = processWord(tokens[1],unseen_word_prob, values,previous)
-    fmt.Printf("POS:%s\n",printMaxTag(values,previous))
+    posTags = append(posTags,printMaxTag(values,previous))
     for _,i := range tokens[2:len(tokens)-1] {
         for idx,j := range values {
             next = fastProcessTag(j.PosTag,previous[idx],unseen_tag_prob,values,next)
-            //next = processTag(j.PosTag,values,previous[idx],next)
-            //fmt.Printf("%v\n",next)
-            //fmt.Printf("============================\n")
         }
         next = processWord(i,unseen_word_prob, values,next)
-        fmt.Printf("POS:%s\n",printMaxTag(values,next))
-        //fmt.Printf("%v",next)
+        posTags = append(posTags,printMaxTag(values,next))
+        //fmt.Printf("POS:%s\n",printMaxTag(values,next))
         previous = next
         next = make([]float64,82)
     }
-    // for idx,_ := range previous {
-    //     fmt.Printf("%s %.2f\n",values[idx].PosTag,previous[idx])
-    // }
+    return posTags
 }

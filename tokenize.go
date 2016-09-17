@@ -4,7 +4,7 @@ import ("io/ioutil"
         "strings"
         "regexp"
         "html"
-        //"fmt"
+        "fmt"
 )
 /*
 	GetRegex :-
@@ -45,7 +45,7 @@ func GetRegex() string {
 func ProcessLine(line string, regularexp string) []string {
 	//fmt.Printf(line)
 	var matches = make([]string, 0, 2000)
-	matches = append(matches,"<s>")
+	matches = append(matches,"<s>/starts")
 	var search = regexp.MustCompile(regularexp)
     for _, m := range search.FindAllString(line, -1) {
         matches = append(matches, string(m))
@@ -56,6 +56,20 @@ func ProcessLine(line string, regularexp string) []string {
 	return matches
 }
 
+
+func ProcessLines(line string, regularexp string) []string {
+	//fmt.Printf(line)
+	var matches = make([]string, 0, 2000)
+	matches = append(matches,"<s>")
+	var search = regexp.MustCompile(regularexp)
+    for _, m := range search.FindAllString(line, -1) {
+        matches = append(matches, string(m))
+        //fmt.Printf(string(m)+",")
+    }
+	//fmt.Printf("\n")
+	//fmt.Printf("%#v",matches)
+	return matches
+}
 /*
 	ReadFile :- Reads from the Tweet.en.txt file, splits on each line since
 	each tweet can be considered as a set of sentences and sentences seldom span multiple
@@ -83,8 +97,8 @@ func ReadBrown() {
     corpus_location := "/home/sahil/nltk_data/corpora/brown"
     files, _ := ioutil.ReadDir(corpus_location)
     //tokens := make([][]string,0)
-    for _, f := range files {
-        if(f.Name() != "README" && f.Name() != "CONTENTS") {
+    for j, f := range files {
+        if(f.Name() != "README" && f.Name() != "CONTENTS" && j < 400) {
             dat,_ := ioutil.ReadFile(corpus_location+"/"+f.Name())
             regularexp := GetRegex()
             //fmt.Printf(string(dat))
@@ -101,6 +115,41 @@ func ReadBrown() {
                     // fmt.Println("%v",matches)
                 }
             	//tokens = append(tokens,matches)
+            }
+        } else {
+            fmt.Printf("%s\n",f.Name())
+        }
+    }
+}
+
+func runTests() {
+    dat, err := ioutil.ReadFile("Test/testSet.txt")
+    corpus_location := "/home/sahil/nltk_data/corpora/brown"
+    if err != nil {
+        panic(err)
+    }
+    var regularexp = GetRegex()
+    //fmt.Printf(string(dat))
+    var s [] string = strings.Split(string(dat),"\n")
+    for _,i := range s {
+        dat,_ := ioutil.ReadFile(corpus_location+"/"+i)
+        //fmt.Printf(string(dat))
+        s := strings.Split(string(dat),"\n")
+        matches := make([]string, 0, 2000)
+        for _,i := range s {
+        	matches = ProcessLine(i,regularexp)
+            if(len(matches) > 1) {
+                matches = append(matches,"<\\s>/ends")
+                sentence := make([]string,0)
+                posTags := make([]string,0)
+                for _,k := range matches {
+                    temp := strings.Split(k,"/")
+                    sentence = append(sentence,temp[0])
+                    posTags = append(posTags,temp[len(temp)-1])
+                }
+
+                returnTags := viterbi(strings.Join(sentence," "))
+                fmt.Printf("%s\n%#v\n%#v\n=====================\n",strings.Join(sentence," "),returnTags,posTags)
             }
         }
     }
