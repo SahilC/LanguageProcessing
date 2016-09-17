@@ -15,15 +15,20 @@ func printMaxTag(posUnigrams []PosUniGram,previous []float64) string {
     return maxTag
 }
 
-func processWord(word string,posUnigrams []PosUniGram, previous []float64) []float64 {
+func processWord(word string,unseen_prob float64,posUnigrams []PosUniGram, previous []float64) []float64 {
     next := make([]float64,82)
     possibleTags := getWordPosgramCount(word)
     for idx,j := range posUnigrams {
+        changed := true
         for _,k := range possibleTags {
             if (k.PosTag == j.PosTag) {
                 //next[idx] = math.Log(float64(k.Count)) - math.Log(float64(j.Count)) + previous[idx]
                 next[idx] = float64(k.Count)*previous[idx]/float64(j.Count)
+                changed = false
             }
+        }
+        if(changed) {
+            next[idx] = unseen_prob*previous[idx]
         }
     }
     //fmt.Printf("%v",next)
@@ -88,14 +93,14 @@ func viterbi(sentence string) {
     tag := "starts"
     // to-do change this to a dynamic query for total
     unseen_tag_prob := getPOSUnseen("posTags",1045943)
-    //unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
+    unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
 
     for idx,j := range values {
         count := getPosgram(tag + " " + j.PosTag)
         //previous[idx] = math.Log(float64(count)) - math.Log(float64(j.Count))
         previous[idx] = float64(count)/float64(j.Count)
     }
-    previous = processWord(tokens[1],values,previous)
+    previous = processWord(tokens[1],unseen_word_prob, values,previous)
     fmt.Printf("POS:%s\n",printMaxTag(values,previous))
     for _,i := range tokens[2:len(tokens)-1] {
         for idx,j := range values {
@@ -104,7 +109,7 @@ func viterbi(sentence string) {
             //fmt.Printf("%v\n",next)
             //fmt.Printf("============================\n")
         }
-        next = processWord(i,values,next)
+        next = processWord(i,unseen_word_prob, values,next)
         fmt.Printf("POS:%s\n",printMaxTag(values,next))
         //fmt.Printf("%v",next)
         previous = next
