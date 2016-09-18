@@ -32,9 +32,9 @@ func WalkCorpora() {
 
 func main() {
 	//ReadBrown()
-	runTests()
+	//runTests()
 	//getFrequencyAggregation("wordPosgram")
-	//viterbi("Where are you?")
+	//fmt.Printf("%#v",viterbi("My name is Sahil"))
 	//WalkCorpora()
 	// //reader := bufio.NewReader(os.Stdin)
 	// //fmt.Printf("Enter Sentence to be Evaluated:\n")

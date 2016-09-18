@@ -147,9 +147,9 @@ func runTests() {
                     sentence = append(sentence,temp[0])
                     posTags = append(posTags,temp[len(temp)-1])
                 }
-                //fmt.Printf("%v\n",sentence)
-                returnTags := viterbi(strings.Join(sentence[1:len(sentence)-1]," "))
-                fmt.Printf("%s\n%#v\n%#v\n=====================\n",strings.Join(sentence," "),returnTags,posTags)
+                fmt.Printf("%#v\n",i)
+                //returnTags := viterbi(strings.Join(sentence[1:len(sentence)-1]," "))
+                //fmt.Printf("%s\n%#v\n%#v\n=====================\n",strings.Join(sentence," "),returnTags,posTags)
             }
         }
     }
