@@ -205,7 +205,7 @@ func TokenizeSentences(filename string) [][]string {
     var matches = make([]string, 0, 2000)
     var regularexp = GetRegex()
     for _,i := range s {
-    	matches = ProcessLine(i,regularexp)
+    	matches = ProcessPOSLine(i,regularexp)
     	matches = append(matches,"<\\s>")
     	tokens = append(tokens,matches)
     }

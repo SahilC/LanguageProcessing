@@ -38,11 +38,11 @@ func GetRegex() string {
 
 
 /*
-	ProcessLine :-
+	ProcessPOSLine :-
 	 	Takes the generated Regex expression, and matches tokens line by line to
 	 	them. Each match is considered as a separate token.
 */
-func ProcessLine(line string, regularexp string) []string {
+func ProcessPOSLine(line string, regularexp string) []string {
 	//fmt.Printf(line)
 	var matches = make([]string, 0, 2000)
 	matches = append(matches,"<s>/starts")
@@ -57,7 +57,7 @@ func ProcessLine(line string, regularexp string) []string {
 }
 
 
-func ProcessLines(line string, regularexp string) []string {
+func ProcessSentences(line string, regularexp string) []string {
 	//fmt.Printf(line)
 	var matches = make([]string, 0, 2000)
 	matches = append(matches,"<s>")
@@ -86,7 +86,7 @@ func ReadFile() [][]string {
     var tokens = make([][]string,0)
     var matches = make([]string, 0, 2000)
     for _,i := range s {
-    	matches = ProcessLine(html.UnescapeString(i),regularexp)
+    	matches = ProcessPOSLine(html.UnescapeString(i),regularexp)
     	matches = append(matches,"<\\s>")
     	tokens = append(tokens,matches)
     }
@@ -105,7 +105,7 @@ func ReadBrown() {
             s := strings.Split(string(dat),"\n")
             matches := make([]string, 0, 2000)
             for _,i := range s {
-            	matches = ProcessLine(html.UnescapeString(i),regularexp)
+            	matches = ProcessPOSLine(html.UnescapeString(i),regularexp)
                 if(len(matches) > 1) {
                     matches = append(matches,"<\\s>/ends")
                     //InsertTokens(matches)
@@ -137,7 +137,7 @@ func runTests() {
         s := strings.Split(string(dat),"\n")
         matches := make([]string, 0, 2000)
         for _,i := range s {
-        	matches = ProcessLine(i,regularexp)
+        	matches = ProcessPOSLine(i,regularexp)
             if(len(matches) > 1) {
                 matches = append(matches,"<\\s>/ends")
                 sentence := make([]string,0)
@@ -147,9 +147,9 @@ func runTests() {
                     sentence = append(sentence,temp[0])
                     posTags = append(posTags,temp[len(temp)-1])
                 }
-                fmt.Printf("%#v\n",i)
-                //returnTags := viterbi(strings.Join(sentence[1:len(sentence)-1]," "))
-                //fmt.Printf("%s\n%#v\n%#v\n=====================\n",strings.Join(sentence," "),returnTags,posTags)
+                //fmt.Printf("%#v\n",i)
+                returnTags := viterbi(strings.Join(sentence[1:len(sentence)-1]," "))
+                fmt.Printf("%s\n%#v\n%#v\n=====================\n",strings.Join(sentence," "),returnTags,posTags)
             }
         }
     }

@@ -90,6 +90,10 @@ func InsertWordPosgram(tokens []string) {
 	}
 }
 
+func InsertChunkgram(chunks []string) {
+	
+}
+
 func InsertPOSNgram(tokens []string, n int) {
     maxWait := time.Duration(5 * time.Second)
     session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)

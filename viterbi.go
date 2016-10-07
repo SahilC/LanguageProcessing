@@ -87,7 +87,7 @@ func viterbi(sentence string) []string {
     previous := make([]float64,82)
     next := make([]float64,82)
     regularexp := GetRegex()
-    tokens := ProcessLines(sentence,regularexp)
+    tokens := ProcessSentences(sentence,regularexp)
     tokens = append(tokens,"<\\s>")
     fmt.Printf("%#v\n",tokens)
     values := getAllPosUnigrams()
