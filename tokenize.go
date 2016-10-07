@@ -129,7 +129,11 @@ func ReadCONLL() {
     s := strings.Split(string(dat),"\n")
     //matches := make([]string, 0, 2000)
     for _,i := range s {
-        fmt.Printf("%#v\n",strings.Split(string(i)," "))
+        line := strings.Split(string(i)," ")
+        fmt.Printf("%#v\n",line)
+        if(len(line) == 3 && line[0] != "." && line[1] != "." && line[2] != "O") {
+            InsertChunkgram(line)
+        }
     }
 }
 
