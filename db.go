@@ -102,6 +102,24 @@ func InsertChunkgram(chunk_list []string) {
 	chunkgrams.Upsert(bson.M{"word_pos":chunk_list[0]+"-"+chunk_list[1],"chunk_tag":chunk_list[2]},bson.M{"$inc": bson.M{"count": 1}})
 }
 
+func InsertChunkNgram(tokens []string, n int) {
+    maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    chunk := session.DB("nlprokz").C("chunkngram")
+	for j := 0; j < (len(tokens) - n); j++ {
+		chunkSeq := make([]string,0)
+		for a := 0; a < n; a++ {
+			chunkSeq = append(chunkSeq,tokens[j+a])
+		}
+        chunk.Upsert(bson.M{"ngram":strings.Join(chunkSeq," ")},bson.M{"$inc": bson.M{"count": 1}})
+	}
+}
+
 func InsertPOSNgram(tokens []string, n int) {
     maxWait := time.Duration(5 * time.Second)
     session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)

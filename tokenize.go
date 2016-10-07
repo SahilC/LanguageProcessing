@@ -127,12 +127,18 @@ func ReadCONLL() {
     dat,_ := ioutil.ReadFile(corpus_location)
     //fmt.Printf(string(dat))
     s := strings.Split(string(dat),"\n")
-    //matches := make([]string, 0, 2000)
+    matches := make([]string, 0)
     for _,i := range s {
         line := strings.Split(string(i)," ")
         fmt.Printf("%#v\n",line)
-        if(len(line) == 3 && line[0] != "." && line[1] != "." && line[2] != "O") {
-            InsertChunkgram(line)
+        if(len(line) == 3) {
+            if ( line[0] != "." && line[1] != "." && line[2] != "O") {
+                matches = append(matches,line[2])
+                //InsertChunkgram(line)
+            } else {
+                InsertChunkNgram(matches,2)
+                matches = make([]string, 0)
+            }
         }
     }
 }
