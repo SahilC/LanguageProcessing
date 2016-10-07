@@ -122,7 +122,18 @@ func ReadBrown() {
     }
 }
 
-func runTests() {
+func ReadCONLL() {
+    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/train.txt"
+    dat,_ := ioutil.ReadFile(corpus_location)
+    //fmt.Printf(string(dat))
+    s := strings.Split(string(dat),"\n")
+    //matches := make([]string, 0, 2000)
+    for _,i := range s {
+        fmt.Printf("%#v\n",strings.Split(string(i)," "))
+    }
+}
+
+func runPOSTests() {
     dat, err := ioutil.ReadFile("Test/testSet.txt")
     corpus_location := "/home/sahil/nltk_data/corpora/brown"
     if err != nil {
