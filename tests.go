@@ -38,3 +38,26 @@ func runPOSTests() {
         }
     }
 }
+
+
+func RunHMMChunkerTests() {
+    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/test.txt"
+    dat,_ := ioutil.ReadFile(corpus_location)
+    //fmt.Printf(string(dat))
+    s := strings.Split(string(dat),"\n")
+    matches := make([]string, 0)
+    for _,i := range s {
+        line := strings.Split(string(i)," ")
+        //fmt.Printf("%#v\n",line)
+        if(len(line) == 3) {
+            if ( line[0] != "." && line[1] != "." && line[2] != "O") {
+                matches = append(matches,line[0])
+            } else {
+                returnTags := getPOSTags(strings.Join(matches," "))
+                chunkTags := getChunkTags(matches,returnTags)
+                fmt.Printf("%#v\n",chunkTags)
+                matches = make([]string, 0)
+            }
+        }
+    }
+}

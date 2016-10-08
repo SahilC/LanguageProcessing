@@ -124,13 +124,14 @@ func getPOSTags(sentence string) []string {
     posTags := make([]string,0)
     previous := make([]float64,82)
     next := make([]float64,82)
+
     regularexp := GetRegex()
     tokens := ProcessSentences(sentence,regularexp)
     tokens = append(tokens,"<\\s>")
     fmt.Printf("%#v\n",tokens)
     values := getAllPosUnigrams()
     tag := "starts"
-
+    posTags = append(posTags,tag)
     // to-do change this to a dynamic query for total
     // unseen_tag_prob := getPOSUnseen("posTags",1045943)
     unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
@@ -155,6 +156,7 @@ func getPOSTags(sentence string) []string {
         previous = next
         next = make([]float64,82)
     }
+    posTags = append(posTags,"ends")
     return posTags
 }
 
