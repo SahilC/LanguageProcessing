@@ -32,8 +32,8 @@ func WalkCorpora() {
 
 func main() {
 	//ReadBrown()
-	//runTests()
-	ReadCONLL()
+	runPOSTests()
+	//ReadCONLL()
 	//getFrequencyAggregation("wordPosgram")
 	//fmt.Printf("%#v",viterbi("My name is Sahil"))
 	//WalkCorpora()

@@ -169,16 +169,16 @@ func InsertPOSNgram(tokens []string, n int) {
 	}
 }
 
-func getPosgram(posGram string) int {
+func getNgram(nGram string, dbname string) int {
     session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
     defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-    pos := session.DB("nlprokz").C("posTags")
+    pos := session.DB("nlprokz").C(dbname)
 	results := Ngrams{}
-	pos.Find(bson.M{"ngram": posGram}).One(&results)
+	pos.Find(bson.M{"ngram": nGram}).One(&results)
 	//fmt.Printf("%#v",results.Count)
 	return results.Count
 }
@@ -238,6 +238,21 @@ func getAllPosUnigrams() []PosUniGram {
 	session.SetMode(mgo.Monotonic, true)
     pos := session.DB("nlprokz").C("posUnigram")
 	var results []PosUniGram
+	pos.Find(bson.M{}).All(&results)
+	// fmt.Printf("%#v",results)
+	return results
+}
+
+func getAllChunkUnigrams() []Ngrams {
+	maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("chunkunigram")
+	var results []Ngrams
 	pos.Find(bson.M{}).All(&results)
 	// fmt.Printf("%#v",results)
 	return results

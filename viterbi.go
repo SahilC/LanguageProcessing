@@ -41,24 +41,6 @@ func getPOSUnseen(database_name string, ngram_length int) float64 {
 
 func processTag(tag string,val float64,unseen_prob float64, posUnigrams []PosUniGram,previous []float64) []float64 {
     next := make([]float64,82)
-    i := 0
-    for idx,j := range posUnigrams {
-            i += 1
-            count := getPosgram( tag+" "+j.PosTag)
-            //fmt.Printf("%.2f %.2f\n",math.Log(float64(count)) - math.Log(float64(j.Count)) + val,previous[idx])
-            //next[idx] = math.Max(math.Log(float64(count)) - math.Log(float64(j.Count)) + val,previous[idx])
-            if (count != 0) {
-                next[idx] = math.Max(float64(count)*val/float64(j.Count),previous[idx])
-            } else {
-                next[idx] = math.Max(unseen_prob,previous[idx])
-            }
-    }
-    //fmt.Printf("%v\n",i)
-    return next
-}
-
-func fastProcessTag(tag string,val float64,unseen_prob float64, posUnigrams []PosUniGram,previous []float64) []float64 {
-    next := make([]float64,82)
     list := make([]string,82)
     for idx,j := range posUnigrams {
         list[idx] =  tag+" "+j.PosTag
@@ -82,7 +64,7 @@ func fastProcessTag(tag string,val float64,unseen_prob float64, posUnigrams []Po
     return next
 }
 
-func viterbi(sentence string) []string {
+func getPOSTags(sentence string) []string {
     posTags := make([]string,0)
     previous := make([]float64,82)
     next := make([]float64,82)
@@ -99,7 +81,7 @@ func viterbi(sentence string) []string {
     unseen_tag_prob := 0.0
     //unseen_word_prob := 0.0
     for idx,j := range values {
-        count := getPosgram(tag + " " + j.PosTag)
+        count := getNgram(tag + " " + j.PosTag,"posTags")
         //previous[idx] = math.Log(float64(count)) - math.Log(float64(j.Count))
         previous[idx] = float64(count)/float64(j.Count)
     }
@@ -109,7 +91,7 @@ func viterbi(sentence string) []string {
     posTags = append(posTags,printMaxTag(values,previous))
     for _,i := range tokens[2:len(tokens)-1] {
         for idx,j := range values {
-            next = fastProcessTag(j.PosTag,previous[idx],unseen_tag_prob,values,next)
+            next = processTag(j.PosTag,previous[idx],unseen_tag_prob,values,next)
         }
         next = processWord(i,unseen_word_prob, values,next)
         posTags = append(posTags,printMaxTag(values,next))
@@ -119,3 +101,40 @@ func viterbi(sentence string) []string {
     }
     return posTags
 }
+
+
+// func getChunkTags(tokens []string) []string {
+//     posTags := make([]string,0)
+//     previous := make([]float64,82)
+//     next := make([]float64,82)
+//     fmt.Printf("%#v\n",tokens)
+//     values := getAllChunkUnigrams()
+//     tag := "starts"
+//
+//     // to-do change this to a dynamic query for total
+//     // unseen_tag_prob := getPOSUnseen("posTags",1045943)
+//     //unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
+//     unseen_word_prob := 0.0
+//     unseen_tag_prob := 0.0
+//     //unseen_word_prob := 0.0
+//     for idx,j := range values {
+//         count := getNgram(tag + " " + j.PosTag,"")
+//         //previous[idx] = math.Log(float64(count)) - math.Log(float64(j.Count))
+//         previous[idx] = float64(count)/float64(j.Count)
+//     }
+//     // fmt.Printf("%#v\n",previous)
+//     previous = processWord(tokens[1],unseen_word_prob, values,previous)
+//     // fmt.Printf("%#v\n",previous)
+//     posTags = append(posTags,printMaxTag(values,previous))
+//     for _,i := range tokens[2:len(tokens)-1] {
+//         for idx,j := range values {
+//             next = processTag(j.PosTag,previous[idx],unseen_tag_prob,values,next)
+//         }
+//         next = processWord(i,unseen_word_prob, values,next)
+//         posTags = append(posTags,printMaxTag(values,next))
+//         //fmt.Printf("POS:%s\n",printMaxTag(values,next))
+//         previous = next
+//         next = make([]float64,82)
+//     }
+//     return posTags
+// }
