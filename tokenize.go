@@ -128,17 +128,29 @@ func ReadCONLL() {
     //fmt.Printf(string(dat))
     s := strings.Split(string(dat),"\n")
     matches := make([]string, 0)
+    trouble := make([][]string, 0)
+    matches = append(matches,"start_chunk")
     for _,i := range s {
         line := strings.Split(string(i)," ")
         fmt.Printf("%#v\n",line)
         if(len(line) == 3) {
             if ( line[0] != "." && line[1] != "." && line[2] != "O") {
-                matches = append(matches,line[2])
+                // matches = append(matches,line[2])
                 //InsertChunkgram(line)
+                trouble = append(trouble,line)
             } else {
-                InsertChunkNgram(matches,2)
-                matches = make([]string, 0)
+                temp := []string{"<s>","starts","start_chunk"}
+                trouble = append(trouble,temp)
+                //InsertChunkgram(temp)
+                temp = []string{"<\\s>","ends","ends_chunk"}
+                trouble = append(trouble,temp)
+                //InsertChunkgram(temp)
+                // matches = append(matches,"ends_chunk")
+                // InsertChunkNgram(matches,2)
+                // matches = make([]string, 0)
+                // matches = append(matches,"start_chunk")
             }
         }
     }
+    InsertChunkgram(trouble)
 }

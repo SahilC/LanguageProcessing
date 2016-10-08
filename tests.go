@@ -41,7 +41,7 @@ func runPOSTests() {
 
 
 func RunHMMChunkerTests() {
-    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/test.txt"
+    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/small_test.txt"
     dat,_ := ioutil.ReadFile(corpus_location)
     //fmt.Printf(string(dat))
     s := strings.Split(string(dat),"\n")
