@@ -29,6 +29,13 @@ type PosWordGram struct {
 	Count     int
 }
 
+type ChunkPosGram struct {
+	ID        bson.ObjectId `bson:"_id,omitempty"`
+	ChunkTag      string		"chunk_tag"
+	WordPos		string			"word_pos"
+	Count     int
+}
+
 type PosUniGram struct {
 	ID        bson.ObjectId `bson:"_id,omitempty"`
 	PosTag      string		"posTag"
@@ -209,6 +216,21 @@ func getWordPosgram(word string) []PosWordGram {
     pos := session.DB("nlprokz").C("wordPosgram")
 	var results []PosWordGram
 	pos.Find(bson.M{"word":word}).All(&results)
+	// fmt.Printf("%#v",results)
+	return results
+}
+
+func getChunkPosgram(word string,postag string) []ChunkPosGram {
+	maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("chunkgrams")
+	var results []ChunkPosGram
+	pos.Find(bson.M{"word":word+"-"+postag}).All(&results)
 	// fmt.Printf("%#v",results)
 	return results
 }
