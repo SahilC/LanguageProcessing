@@ -183,37 +183,22 @@ func getNgram(nGram string, dbname string) int {
 	return results.Count
 }
 
-func getAllPosgram(posGram []string) []Ngrams {
+func getAllNgram(nGram []string, dbname string) []Ngrams {
     session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
     defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-    pos := session.DB("nlprokz").C("posTags")
+    pos := session.DB("nlprokz").C(dbname)
 	var results []Ngrams
-	pos.Find(bson.M{"ngram": bson.M{"$in":posGram}}).All(&results)
+	pos.Find(bson.M{"ngram": bson.M{"$in":nGram}}).All(&results)
 	// fmt.Printf("%#v",posGram)
 	// fmt.Printf("%v==========\n",len(results))
 	return results
 }
 
 func getWordPosgram(word string) []PosWordGram {
-	maxWait := time.Duration(5 * time.Second)
-    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
-	if err != nil {
-		panic(err)
-	}
-    defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-    pos := session.DB("nlprokz").C("wordPosgram")
-	var results []PosWordGram
-	pos.Find(bson.M{"word":word}).All(&results)
-	// fmt.Printf("%#v",results)
-	return results
-}
-
-func getWordPosgramCount(word string) []PosWordGram {
 	maxWait := time.Duration(5 * time.Second)
     session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
 	if err != nil {
