@@ -97,7 +97,7 @@ func InsertWordPosgram(tokens []string) {
 	}
 }
 
-func InsertChunkgram(chunk_list [][]string) {
+func InsertChunkgram(chunk_list [][]string, posgrams []string) {
 	maxWait := time.Duration(5 * time.Second)
     session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
 	if err != nil {
@@ -106,8 +106,8 @@ func InsertChunkgram(chunk_list [][]string) {
     defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
     chunkgrams := session.DB("nlprokz").C("chunkgrams")
-	for _,chunk := range chunk_list {
-		chunkgrams.Upsert(bson.M{"word_pos":chunk[0]+"-"+chunk[1],"chunk_tag":chunk[2]},bson.M{"$inc": bson.M{"count": 1}})
+	for i,_ := range chunk_list {
+		chunkgrams.Upsert(bson.M{"word_pos":chunk_list[i][0]+"-"+posgrams[i],"chunk_tag":chunk_list[i][2]},bson.M{"$inc": bson.M{"count": 1}})
 	}
 }
 
@@ -218,6 +218,21 @@ func getWordPosgram(word string) []PosWordGram {
     pos := session.DB("nlprokz").C("wordPosgram")
 	var results []PosWordGram
 	pos.Find(bson.M{"word":word}).All(&results)
+	// fmt.Printf("%#v",results)
+	return results
+}
+
+func getAllWordPosgram(word []string) []PosWordGram {
+	maxWait := time.Duration(5 * time.Second)
+    session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C("wordPosgram")
+	var results []PosWordGram
+	pos.Find(bson.M{"word":bson.M{"$in":word}}).All(&results)
 	// fmt.Printf("%#v",results)
 	return results
 }

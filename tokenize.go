@@ -129,16 +129,25 @@ func ReadCONLL() {
     s := strings.Split(string(dat),"\n")
     matches := make([]string, 0)
     trouble := make([][]string, 0)
-    matches = append(matches,"start_chunk")
+    trouble_two := make([]string, 0)
+    //matches = append(matches,"start_chunk")
     for _,i := range s {
         line := strings.Split(string(i)," ")
-        fmt.Printf("%#v\n",line)
+        //fmt.Printf("%#v\n",line)
         if(len(line) == 3) {
-            if ( line[0] != "." && line[1] != "." && line[2] != "O") {
+            if ( line[0] != "." && line[1] != ".") {
                 // matches = append(matches,line[2])
                 //InsertChunkgram(line)
+                matches = append(matches,line[0])
                 trouble = append(trouble,line)
             } else {
+                returnTags := getPOSTags(strings.Join(matches," "))
+                fmt.Printf("%#v=============\n",returnTags)
+                trouble_two =  append(trouble_two,"starts")
+                for _,j := range returnTags {
+                    trouble_two =  append(trouble_two,j)
+                }
+                trouble_two =  append(trouble_two,"ends")
                 temp := []string{"<s>","starts","start_chunk"}
                 trouble = append(trouble,temp)
                 //InsertChunkgram(temp)
@@ -147,10 +156,10 @@ func ReadCONLL() {
                 //InsertChunkgram(temp)
                 // matches = append(matches,"ends_chunk")
                 // InsertChunkNgram(matches,2)
-                // matches = make([]string, 0)
+                matches = make([]string, 0)
                 // matches = append(matches,"start_chunk")
             }
         }
     }
-    InsertChunkgram(trouble)
+    InsertChunkgram(trouble,trouble_two)
 }
