@@ -105,14 +105,16 @@ func InsertChunkgram(chunk_list [][]string, posgrams []string) {
 	}
     defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
-    chunkgrams := session.DB("nlprokz").C("chunkgrams")
-	fmt.Printf("%d\n",len(posgrams))
+    chunkgrams := session.DB("nlprokz").C("wordChunkgrams")
+	chunks := session.DB("nlprokz").C("wordChunks")
+	// fmt.Printf("%d\n",len(posgrams))
 	fmt.Printf("%d\n",len(chunk_list))
-	for i,_ := range chunk_list {
+	for i,_ := range chunk_list[0:len(chunk_list)-1] {
 		// fmt.Printf(posgrams[i])
 		// fmt.Printf(chunk_list[i][0])
 		// fmt.Printf("==============\n")
-		chunkgrams.Upsert(bson.M{"word_pos":chunk_list[i][0]+"-"+posgrams[i],"chunk_tag":chunk_list[i][2]},bson.M{"$inc": bson.M{"count": 1}})
+		chunkgrams.Upsert(bson.M{"ngram":chunk_list[i+1][2]+" "+chunk_list[i][0]+" "+chunk_list[i+1][0]},bson.M{"$inc": bson.M{"count": 1}})
+		chunks.Upsert(bson.M{"ngram":chunk_list[i+1][2]+" "+chunk_list[i][0]},bson.M{"$inc": bson.M{"count": 1}})
 	}
 }
 
@@ -221,7 +223,7 @@ func getSomeNgram(start string, dbname string) Ngrams {
 	session.SetMode(mgo.Monotonic, true)
     pos := session.DB("nlprokz").C(dbname)
 	results := Ngrams{}
-	pos.Find(bson.M{"ngram": bson.M{"$regex":bson.RegEx{`^`+start+`.*`, ""}}}).Sort("-count").One(&results)
+	pos.Find(bson.M{"ngram": bson.M{"$regex":bson.RegEx{`^`+start+`.*`, ""}}}).One(&results)
 	// fmt.Printf("%#v",posGram)
 	// fmt.Printf("%v==========\n",len(results))
 	return results
