@@ -198,49 +198,51 @@ func getPOSTags(sentence string) []string {
     posTags := make([]string,0)
     previous := make([]float64,82)
     next := make([]float64,82)
-
     regularexp := GetRegex()
     tokens := ProcessSentences(sentence,regularexp)
     tokens = append(tokens,"<\\s>")
-    fmt.Printf("%#v\n",tokens)
-    values := getAllPosUnigrams()
-    tag := "starts"
-    //posTags = append(posTags,tag)
-    // to-do change this to a dynamic query for total
-    // unseen_tag_prob := getPOSUnseen("posTags",1045943)
-    start := time.Now()
-    unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
-    unseen_tag_prob := 0.0
-    //unseen_word_prob := 0.0
-    wordgram := bulkPosgrams(values)
-    for idx,j := range values {
-        count := getNgram(tag + " " + j.PosTag,"posTags")
-        //previous[idx] = math.Log(float64(count)) - math.Log(float64(j.Count))
-        previous[idx] = float64(count)/float64(j.Count)
-    }
-    // fmt.Printf("%#v\n",previous)
-    wordPosgram := bulkPoswordgrams(tokens)
-    previous = fastProcessWord(tokens[1],unseen_word_prob,wordPosgram, values,previous)
-    posTags = append(posTags,getMaxTag(values,previous))
-    for _,i := range tokens[2:len(tokens)-1] {
+    if(len(tokens) > 2) {
+        fmt.Printf("%#v\n",tokens)
+        values := getAllPosUnigrams()
+        tag := "starts"
+        //posTags = append(posTags,tag)
+        // to-do change this to a dynamic query for total
+        // unseen_tag_prob := getPOSUnseen("posTags",1045943)
+        start := time.Now()
+        unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
+        unseen_tag_prob := 0.0
+        //unseen_word_prob := 0.0
+        wordgram := bulkPosgrams(values)
         for idx,j := range values {
-            //start := time.Now()
-            next = fastProcessTag(j.PosTag,previous[idx],unseen_tag_prob,wordgram,values,next)
-            //elapsed := time.Since(start)
-            //fmt.Println("Transition:%s\n",elapsed)
+            count := getNgram(tag + " " + j.PosTag,"posTags")
+            //previous[idx] = math.Log(float64(count)) - math.Log(float64(j.Count))
+            previous[idx] = float64(count)/float64(j.Count)
         }
-        //next = processWord(i,unseen_word_prob, values,next)
+        // fmt.Printf("%#v\n",previous)
+        wordPosgram := bulkPoswordgrams(tokens)
+        previous = fastProcessWord(tokens[1],unseen_word_prob,wordPosgram, values,previous)
+        posTags = append(posTags,getMaxTag(values,previous))
+        for _,i := range tokens[2:len(tokens)-1] {
+            for idx,j := range values {
+                //start := time.Now()
+                next = fastProcessTag(j.PosTag,previous[idx],unseen_tag_prob,wordgram,values,next)
+                //elapsed := time.Since(start)
+                //fmt.Println("Transition:%s\n",elapsed)
+            }
+            //next = processWord(i,unseen_word_prob, values,next)
 
-        next = fastProcessWord(i,unseen_word_prob,wordPosgram, values,next)
-        // elapsed := time.Since(start)
-        // fmt.Println("Emission:%s\n",elapsed)
-        posTags = append(posTags,getMaxTag(values,next))
-        //fmt.Printf("POS:%s\n",printMaxTag(values,next))
-        previous = next
-        next = make([]float64,82)
+            next = fastProcessWord(i,unseen_word_prob,wordPosgram, values,next)
+            // elapsed := time.Since(start)
+            // fmt.Println("Emission:%s\n",elapsed)
+            posTags = append(posTags,getMaxTag(values,next))
+            //fmt.Printf("POS:%s\n",printMaxTag(values,next))
+            previous = next
+            next = make([]float64,82)
+        }
+        elapsed := time.Since(start)
+
+        fmt.Println("Total Time:\n",elapsed)
     }
-    elapsed := time.Since(start)
-    fmt.Println("Total Time:\n",elapsed)
     //posTags = append(posTags,"ends")
     return posTags
 }

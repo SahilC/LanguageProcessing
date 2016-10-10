@@ -123,35 +123,48 @@ func ReadBrown() {
 }
 
 func ReadCONLL() {
-    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/train.txt"
+    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/small_train.txt"
     dat,_ := ioutil.ReadFile(corpus_location)
     //fmt.Printf(string(dat))
     s := strings.Split(string(dat),"\n")
     matches := make([]string, 0)
     trouble := make([][]string, 0)
+    temp := []string{"<s>","starts","start_chunk"}
+    trouble = append(trouble,temp)
     trouble_two := make([]string, 0)
+    regex := regexp.MustCompile(`^[A-Za-z\\-]+$`)
     //matches = append(matches,"start_chunk")
     for _,i := range s {
         line := strings.Split(string(i)," ")
-        //fmt.Printf("%#v\n",line)
+        // fmt.Printf("%#v\n",line)
         if(len(line) == 3) {
-            if ( line[0] != "." && line[1] != ".") {
+            if ( regex.MatchString(line[0]) && regex.MatchString(line[1])) {
                 // matches = append(matches,line[2])
                 //InsertChunkgram(line)
                 matches = append(matches,line[0])
                 trouble = append(trouble,line)
             } else {
                 returnTags := getPOSTags(strings.Join(matches," "))
-                fmt.Printf("%#v=============\n",returnTags)
+                if(len(returnTags) != len(matches)) {
+                    fmt.Printf("%#v=============%#v\n",matches,returnTags)
+                }
+
+                // fmt.Printf("%#v=============\n",len(returnTags))
                 trouble_two =  append(trouble_two,"starts")
                 for _,j := range returnTags {
                     trouble_two =  append(trouble_two,j)
                 }
                 trouble_two =  append(trouble_two,"ends")
-                temp := []string{"<s>","starts","start_chunk"}
-                trouble = append(trouble,temp)
                 //InsertChunkgram(temp)
                 temp = []string{"<\\s>","ends","ends_chunk"}
+                trouble = append(trouble,temp)
+                if(len(trouble) >= 200) {
+                    fmt.Printf("================INSERTED====================")
+                    InsertChunkgram(trouble,trouble_two)
+                    trouble = make([][]string, 0)
+                    trouble_two = make([]string, 0)
+                }
+                temp := []string{"<s>","starts","start_chunk"}
                 trouble = append(trouble,temp)
                 //InsertChunkgram(temp)
                 // matches = append(matches,"ends_chunk")
@@ -161,5 +174,5 @@ func ReadCONLL() {
             }
         }
     }
-    InsertChunkgram(trouble,trouble_two)
+    InsertChunkgram(trouble[0:len(trouble)-1],trouble_two)
 }

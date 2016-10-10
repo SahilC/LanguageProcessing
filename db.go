@@ -106,7 +106,12 @@ func InsertChunkgram(chunk_list [][]string, posgrams []string) {
     defer session.Close()
 	session.SetMode(mgo.Monotonic, true)
     chunkgrams := session.DB("nlprokz").C("chunkgrams")
+	fmt.Printf("%d\n",len(posgrams))
+	fmt.Printf("%d\n",len(chunk_list))
 	for i,_ := range chunk_list {
+		// fmt.Printf(posgrams[i])
+		// fmt.Printf(chunk_list[i][0])
+		// fmt.Printf("==============\n")
 		chunkgrams.Upsert(bson.M{"word_pos":chunk_list[i][0]+"-"+posgrams[i],"chunk_tag":chunk_list[i][2]},bson.M{"$inc": bson.M{"count": 1}})
 	}
 }
