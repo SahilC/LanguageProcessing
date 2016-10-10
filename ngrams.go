@@ -84,19 +84,30 @@ func randomWalk(tokens [][]string) {
 	}
 }
 
-func randomChunkWalk() {
+func randomChunkWalk() []string {
 	tag := "start_chunk"
 	sentence := make([]string,0)
 	for len(sentence) < 10 {
 		sentence = append(sentence,tag)
 		results:= getSomeNgram(tag,"chunkngram")
 		temp := strings.Split(results.Ngram," ")
-		fmt.Printf("%v\n",results)
 		tag = temp[1]
 	}
-	fmt.Printf("%#v",sentence)
+	return sentence
 }
 
+func generateLMSentence() []string {
+	sequence := randomChunkWalk()
+	previous_word := "<\\\\s>"
+	sentence := make([]string,0)
+	for _,i := range sequence {
+		sentence = append(sentence,previous_word)
+		temp := getSomeNgram(i+" "+previous_word,"wordChunkgrams")
+		temp2 := strings.Split(temp.Ngram," ")
+		previous_word = temp2[2]
+	}
+	return sentence
+}
 /*
 	estimateEndProbabilities :-
 		Input- A list of lists which contain tokenized strings

@@ -223,8 +223,7 @@ func getSomeNgram(start string, dbname string) Ngrams {
 	session.SetMode(mgo.Monotonic, true)
     pos := session.DB("nlprokz").C(dbname)
 	results := Ngrams{}
-	pos.Find(bson.M{"ngram": bson.M{"$regex":bson.RegEx{`^`+start+`.*`, ""}}}).One(&results)
-	// fmt.Printf("%#v",posGram)
+	err = pos.Find(bson.M{"ngram": bson.M{"$regex":bson.RegEx{`^`+start+`.*`, ""}}}).Sort("-count").One(&results)
 	// fmt.Printf("%v==========\n",len(results))
 	return results
 }
