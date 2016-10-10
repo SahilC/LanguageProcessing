@@ -3,7 +3,7 @@ import (
     "fmt"
     "strings"
     "math"
-    "time"
+    // "time"
 )
 
 func getMaxTag(posUnigrams []PosUniGram,previous []float64) string {
@@ -119,7 +119,7 @@ func processTag(tag string,val float64,unseen_prob float64, posUnigrams []PosUni
     return next
 }
 
-func fastProcessTag(tag string,val float64,unseen_prob float64,posgrams []Ngrams, posUnigrams []PosUniGram,previous []float64) []float64 {
+func fastProcessTag(tag string,tag_count int,val float64,unseen_prob float64,posgrams []Ngrams, posUnigrams []PosUniGram,previous []float64) []float64 {
     next := make([]float64,82)
     result := make([]Ngrams,0)
     for _,j := range posgrams {
@@ -135,7 +135,7 @@ func fastProcessTag(tag string,val float64,unseen_prob float64,posgrams []Ngrams
         for _,k := range result {
             if (k.Ngram == (tag+" "+j.PosTag)) {
                 i += 1
-                next[idx] = math.Max(float64(k.Count)*val/float64(j.Count),previous[idx])
+                next[idx] = math.Max(float64(k.Count)*val/float64(tag_count),previous[idx])
                 change = false
             }
         }
@@ -157,40 +157,42 @@ func processEmission(word string,posTag string,unseen_prob float64,chunkUnigrams
     for idx,j := range chunkUnigrams {
         for _,k := range possibleTags {
             if (k.ChunkTag == j.Ngram) {
-                // fmt.Printf("%d %0.10f %d\n",k.Count,previous[idx],j.Count)
-                next[idx] = math.Log(float64(j.Count)) - math.Log(float64(k.Count)) - previous[idx]
-                //next[idx] = float64(k.Count)*previous[idx]/float64(j.Count)
+                // fmt.Printf("%s %s\n",k.ChunkTag,j.Ngram)
+                // next[idx] = math.Log(float64(j.Count)) - math.Log(float64(k.Count)) - previous[idx]
+                next[idx] = float64(k.Count)*previous[idx]/float64(j.Count)
             }
         }
     }
-    // fmt.Printf("%v\n",next)
+    fmt.Printf("Emission:%v\n",next)
     return next
 }
 
-func processTransition(tag string,val float64,unseen_prob float64, chunkUnigrams []Ngrams,previous []float64) []float64 {
+func processTransition(tag string,tag_count int,val float64,unseen_prob float64, chunkUnigrams []Ngrams,previous []float64) []float64 {
     next := make([]float64,len(previous))
     list := make([]string,len(previous))
     for idx,j := range chunkUnigrams {
         list[idx] =  tag+" "+j.Ngram
     }
-    // fmt.Printf("%v\n",list)
+    // fmt.Printf("%v\n",tag)
     result := getAllNgram(list,"chunkngram")
 
     i := 0
+    // fmt.Printf("%d\n",tag_count)
     for idx,j := range chunkUnigrams {
         change := true
         for _,k := range result {
             if (k.Ngram == (tag+" "+j.Ngram)) {
                 i += 1
-                next[idx] = math.Max(math.Log(float64(j.Count)) - math.Log(float64(k.Count)) - math.Log(val),previous[idx])
+                //next[idx] = math.Min(math.Log(float64(j.Count)) - math.Log(float64(k.Count)) - math.Log(val),previous[idx])
+                next[idx] = math.Max(float64(k.Count)*val/float64(tag_count),previous[idx])
                 change = false
             }
         }
         if(change) {
-            next[idx] = math.Max(math.Log(unseen_prob),previous[idx])
+            next[idx] = math.Max(unseen_prob,previous[idx])
         }
     }
-    //fmt.Printf("%v\n",next)
+    fmt.Printf("Transition:%v\n",next)
     return next
 }
 
@@ -208,7 +210,7 @@ func getPOSTags(sentence string) []string {
         //posTags = append(posTags,tag)
         // to-do change this to a dynamic query for total
         // unseen_tag_prob := getPOSUnseen("posTags",1045943)
-        start := time.Now()
+        //start := time.Now()
         unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
         unseen_tag_prob := 0.0
         //unseen_word_prob := 0.0
@@ -225,7 +227,7 @@ func getPOSTags(sentence string) []string {
         for _,i := range tokens[2:len(tokens)-1] {
             for idx,j := range values {
                 //start := time.Now()
-                next = fastProcessTag(j.PosTag,previous[idx],unseen_tag_prob,wordgram,values,next)
+                next = fastProcessTag(j.PosTag,j.Count,previous[idx],unseen_tag_prob,wordgram,values,next)
                 //elapsed := time.Since(start)
                 //fmt.Println("Transition:%s\n",elapsed)
             }
@@ -239,9 +241,9 @@ func getPOSTags(sentence string) []string {
             previous = next
             next = make([]float64,82)
         }
-        elapsed := time.Since(start)
+        //elapsed := time.Since(start)
 
-        fmt.Println("Total Time:\n",elapsed)
+        //fmt.Println("Total Time:\n",elapsed)
     }
     //posTags = append(posTags,"ends")
     return posTags
@@ -262,19 +264,21 @@ func getChunkTags(tokens []string,posTags []string) []string {
     unseen_tag_prob := 0.0
     //unseen_word_prob := 0.0
     for idx,j := range values {
+        fmt.Printf(tag + " " + j.Ngram+"\n")
         count := getNgram(tag + " " + j.Ngram,"chunkngram")
-        previous[idx] = math.Log(float64(count)) - math.Log(float64(j.Count))
+        previous[idx] = float64(count)/float64(j.Count)
         //previous[idx] = float64(count)/float64(j.Count)
     }
+    fmt.Printf("Previous:%#v\n",previous)
     previous = processEmission(tokens[0],posTags[0],unseen_word_prob, values,previous)
     chunkTags = append(chunkTags,getMaxChunkTag(values,previous))
     for i,_ := range tokens[1:len(tokens)] {
         for idx,j := range values {
-            next = processTransition(j.Ngram,previous[idx],unseen_tag_prob,values,next)
+            next = processTransition(j.Ngram,j.Count,previous[idx],unseen_tag_prob,values,next)
         }
         next = processEmission(tokens[i+1],posTags[i+1],unseen_word_prob, values,next)
         chunkTags = append(chunkTags,getMaxChunkTag(values,next))
-        //fmt.Printf("POS:%s\n",printMaxTag(values,next))
+        fmt.Printf("CHUNK:%s\n",getMaxChunkTag(values,next))
         previous = next
         next = make([]float64,22)
     }
