@@ -49,12 +49,13 @@ func RunHMMChunkerTests() {
     chunk_tag := make([]string,0)
     for _,i := range s {
         line := strings.Split(string(i)," ")
-        //fmt.Printf("%#v\n",line)
+        // fmt.Printf("%#v\n",line)
         if(len(line) == 3) {
-            if ( line[0] != "." && line[1] != "." && line[2] != "O") {
+            if ( line[0] != "." && line[1] != ".") {
                 matches = append(matches,line[0])
                 chunk_tag = append(chunk_tag,line[2])
             } else {
+                //fmt.Printf("%#v\n",matches)
                 returnTags := getPOSTags(strings.Join(matches," "))
                 chunkTags := getChunkTags(matches,returnTags)
                 fmt.Printf("%#v\n",chunkTags)
