@@ -149,17 +149,17 @@ func fastProcessTag(tag string,val float64,unseen_prob float64,posgrams []Ngrams
 
 func processEmission(word string,posTag string,unseen_prob float64,chunkUnigrams []Ngrams, previous []float64) []float64 {
     next := make([]float64,len(previous))
-    possibleTags := getChunkPosgram(word,strings.ToUpper(posTag))
+    possibleTags := getChunkPosgram(word,posTag)
     if (len(possibleTags) == 0) {
-        possibleTags = getChunkPosgram("nil",strings.ToUpper(posTag))
+        possibleTags = getChunkPosgram("nil",posTag)
     }
     fmt.Printf("%s %s\n",word,posTag)
     for idx,j := range chunkUnigrams {
         for _,k := range possibleTags {
             if (k.ChunkTag == j.Ngram) {
                 fmt.Printf("%d %0.10f %d\n",k.Count,previous[idx],j.Count)
-                //next[idx] = math.Log(float64(k.Count)) - math.Log(float64(j.Count)) + previous[idx]
-                next[idx] = float64(k.Count)*previous[idx]/float64(j.Count)
+                next[idx] = math.Log(float64(j.Count)) - math.Log(float64(k.Count)) - previous[idx]
+                //next[idx] = float64(k.Count)*previous[idx]/float64(j.Count)
             }
         }
     }
@@ -182,12 +182,12 @@ func processTransition(tag string,val float64,unseen_prob float64, chunkUnigrams
         for _,k := range result {
             if (k.Ngram == (tag+" "+j.Ngram)) {
                 i += 1
-                next[idx] = math.Max(float64(k.Count)*val/float64(j.Count),previous[idx])
+                next[idx] = math.Max(math.Log(float64(j.Count)) - math.Log(float64(k.Count)) - math.Log(val),previous[idx])
                 change = false
             }
         }
         if(change) {
-            next[idx] = math.Max(unseen_prob,previous[idx])
+            next[idx] = math.Max(math.Log(unseen_prob),previous[idx])
         }
     }
     //fmt.Printf("%v\n",next)
@@ -263,8 +263,8 @@ func getChunkTags(tokens []string,posTags []string) []string {
     //unseen_word_prob := 0.0
     for idx,j := range values {
         count := getNgram(tag + " " + j.Ngram,"chunkngram")
-        //previous[idx] = math.Log(float64(count)) - math.Log(float64(j.Count))
-        previous[idx] = float64(count)/float64(j.Count)
+        previous[idx] = math.Log(float64(count)) - math.Log(float64(j.Count))
+        //previous[idx] = float64(count)/float64(j.Count)
     }
     previous = processEmission(tokens[0],posTags[0],unseen_word_prob, values,previous)
     // fmt.Printf("POS:%v\n",previous)
