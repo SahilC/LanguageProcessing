@@ -3,7 +3,7 @@ import (
     "fmt"
     "strings"
     "math"
-    // "time"
+    "time"
 )
 
 func getMaxTag(posUnigrams []PosUniGram,previous []float64) string {
@@ -210,7 +210,7 @@ func getPOSTags(sentence string) []string {
         //posTags = append(posTags,tag)
         // to-do change this to a dynamic query for total
         // unseen_tag_prob := getPOSUnseen("posTags",1045943)
-        //start := time.Now()
+        start := time.Now()
         unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
         unseen_tag_prob := 0.0
         //unseen_word_prob := 0.0
@@ -241,9 +241,8 @@ func getPOSTags(sentence string) []string {
             previous = next
             next = make([]float64,82)
         }
-        //elapsed := time.Since(start)
-
-        //fmt.Println("Total Time:\n",elapsed)
+        elapsed := time.Since(start)
+        fmt.Println(elapsed)
     }
     //posTags = append(posTags,"ends")
     return posTags

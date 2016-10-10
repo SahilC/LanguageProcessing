@@ -84,41 +84,18 @@ func randomWalk(tokens [][]string) {
 	}
 }
 
-// func randomWalk(tokens [][]string) {
-// 	var ngrams []map[string] int
-// 	var count int = 0
-// 	for n:=1;n<=6;n++ {
-// 		ngrams = append(ngrams,buildNGram(tokens,n))
-// 		if(n > 1) {
-// 			for k,_ := range ngrams[n-1] {
-// 				var temp = strings.Split(k," ")
-// 				if(strings.EqualFold(temp[0],"<s>" )) {
-// 					var currentToken string = ""
-// 					var sentence string = strings.Join(temp[:len(temp)-1]," ")
-// 					for !strings.EqualFold(currentToken,"<\\s>") {
-// 						for a,_ := range ngrams[n-1] {
-// 							var temp2 []string = strings.Split(a, " ")
-// 							if(strings.EqualFold(strings.Join(temp[1:]," "),strings.Join(temp2[:len(temp2)-1]," "))) {
-// 								currentToken = temp2[len(temp2)-1]
-// 								sentence = sentence+ " " + currentToken
-// 								temp = temp2
-// 								//fmt.Printf(sentence+"\n")
-// 								break
-// 							}
-// 						}
-// 					}
-// 					count += 1
-// 					fmt.Printf("%d. ",n)
-// 					fmt.Printf(sentence+"\n")
-// 					if(count > 5) {
-// 						count = 0
-// 						break
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+func randomChunkWalk() {
+	tag := "start_chunk"
+	sentence := make([]string,0)
+	for len(sentence) < 10 {
+		sentence = append(sentence,tag)
+		results:= getSomeNgram(tag,"chunkngram")
+		temp := strings.Split(results.Ngram," ")
+		fmt.Printf("%v\n",results)
+		tag = temp[1]
+	}
+	fmt.Printf("%#v",sentence)
+}
 
 /*
 	estimateEndProbabilities :-

@@ -123,7 +123,7 @@ func ReadBrown() {
 }
 
 func ReadCONLL() {
-    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/small_train.txt"
+    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/train.txt"
     dat,_ := ioutil.ReadFile(corpus_location)
     //fmt.Printf(string(dat))
     s := strings.Split(string(dat),"\n")
@@ -143,6 +143,8 @@ func ReadCONLL() {
                 //InsertChunkgram(line)
                 matches = append(matches,line[0])
                 trouble = append(trouble,line)
+            } else if(line[0]!= "." && line[1]!= ".") {
+
             } else {
                 returnTags := getPOSTags(strings.Join(matches," "))
                 if(len(returnTags) != len(matches)) {
@@ -158,7 +160,7 @@ func ReadCONLL() {
                 //InsertChunkgram(temp)
                 temp = []string{"<\\s>","ends","ends_chunk"}
                 trouble = append(trouble,temp)
-                if(len(trouble) >= 200) {
+                if(len(trouble) >= 1000) {
                     fmt.Printf("================INSERTED====================")
                     InsertChunkgram(trouble,trouble_two)
                     trouble = make([][]string, 0)

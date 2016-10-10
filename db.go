@@ -212,6 +212,21 @@ func getAllNgram(nGram []string, dbname string) []Ngrams {
 	return results
 }
 
+func getSomeNgram(start string, dbname string) Ngrams {
+    session, err := mgo.Dial("127.0.0.1")
+	if err != nil {
+		panic(err)
+	}
+    defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+    pos := session.DB("nlprokz").C(dbname)
+	results := Ngrams{}
+	pos.Find(bson.M{"ngram": bson.M{"$regex":bson.RegEx{`^`+start+`.*`, ""}}}).Sort("-count").One(&results)
+	// fmt.Printf("%#v",posGram)
+	// fmt.Printf("%v==========\n",len(results))
+	return results
+}
+
 func getWordPosgram(word string) []PosWordGram {
 	maxWait := time.Duration(5 * time.Second)
     session, err := mgo.DialWithTimeout("127.0.0.1",maxWait)
