@@ -7,23 +7,30 @@ import (
 )
 
 func getMaxTag(posUnigrams []PosUniGram,previous []float64) string {
-    maxVal := math.Log(0)
+    maxVal := 0.0
     maxTag := posUnigrams[0].PosTag
     for idx,j := range posUnigrams {
-        if(previous[idx] != 0 && math.Exp(previous[idx]) > maxVal) {
-            maxVal = math.Exp(previous[idx])
+        if(previous[idx] != 0 && previous[idx] > maxVal) {
+            maxVal = previous[idx]
             maxTag = j.PosTag
         }
     }
     return maxTag
 }
 
+func printTags(posUnigrams []Ngrams) {
+    for _,j := range posUnigrams {
+        fmt.Printf("%s ",j.Ngram)
+    }
+    fmt.Printf("\n\n")
+}
+
 func getMaxChunkTag(posUnigrams []Ngrams,previous []float64) string {
-    maxVal := math.Log(0)
+    maxVal := 0.0
     maxTag := posUnigrams[0].Ngram
     for idx,j := range posUnigrams {
-        if(previous[idx] != 0 && math.Exp(previous[idx]) > maxVal) {
-            maxVal = math.Exp(previous[idx])
+        if(previous[idx] != 0 && previous[idx] > maxVal) {
+            maxVal = previous[idx]
             maxTag = j.Ngram
         }
     }
@@ -192,7 +199,7 @@ func processTransition(tag string,tag_count int,val float64,unseen_prob float64,
             next[idx] = math.Max(unseen_prob,previous[idx])
         }
     }
-    fmt.Printf("Transition:%v\n",next)
+    // fmt.Printf("Transition:%v\n",next)
     return next
 }
 
@@ -262,24 +269,28 @@ func getChunkTags(tokens []string,posTags []string) []string {
     unseen_word_prob := 0.0
     unseen_tag_prob := 0.0
     //unseen_word_prob := 0.0
-    for idx,j := range values {
-        fmt.Printf(tag + " " + j.Ngram+"\n")
-        count := getNgram(tag + " " + j.Ngram,"chunkngram")
-        previous[idx] = float64(count)/float64(j.Count)
-        //previous[idx] = float64(count)/float64(j.Count)
-    }
-    fmt.Printf("Previous:%#v\n",previous)
-    previous = processEmission(tokens[0],posTags[0],unseen_word_prob, values,previous)
-    chunkTags = append(chunkTags,getMaxChunkTag(values,previous))
-    for i,_ := range tokens[1:len(tokens)] {
+    if(len(tokens) == len(posTags)) {
         for idx,j := range values {
-            next = processTransition(j.Ngram,j.Count,previous[idx],unseen_tag_prob,values,next)
+            fmt.Printf(tag + " " + j.Ngram+"\n")
+            count := getNgram(tag + " " + j.Ngram,"chunkngram")
+            previous[idx] = float64(count)/float64(j.Count)
+            //previous[idx] = float64(count)/float64(j.Count)
         }
-        next = processEmission(tokens[i+1],posTags[i+1],unseen_word_prob, values,next)
-        chunkTags = append(chunkTags,getMaxChunkTag(values,next))
-        fmt.Printf("CHUNK:%s\n",getMaxChunkTag(values,next))
-        previous = next
-        next = make([]float64,22)
+        // fmt.Printf("Previous:%#v\n",previous)
+        // printTags(values)
+        previous = processEmission(tokens[0],posTags[0],unseen_word_prob, values,previous)
+        chunkTags = append(chunkTags,getMaxChunkTag(values,previous))
+        for i,_ := range tokens[1:len(tokens)] {
+            for idx,j := range values {
+                next = processTransition(j.Ngram,j.Count,previous[idx],unseen_tag_prob,values,next)
+            }
+
+            next = processEmission(tokens[i+1],posTags[i+1],unseen_word_prob, values,next)
+            chunkTags = append(chunkTags,getMaxChunkTag(values,next))
+            fmt.Printf("CHUNK:%s\n",getMaxChunkTag(values,next))
+            previous = next
+            next = make([]float64,22)
+        }
     }
     return chunkTags
 }

@@ -41,7 +41,7 @@ func runPOSTests() {
 
 
 func RunHMMChunkerTests() {
-    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/small_test.txt"
+    corpus_location := "/home/sahil/nltk_data/corpora/conll2000/test.txt"
     dat,_ := ioutil.ReadFile(corpus_location)
     //fmt.Printf(string(dat))
     s := strings.Split(string(dat),"\n")
@@ -60,9 +60,9 @@ func RunHMMChunkerTests() {
                 //fmt.Printf("%#v\n",matches)
                 returnTags := getPOSTags(strings.Join(matches," "))
                 chunkTags := getChunkTags(matches,returnTags)
-                fmt.Printf("%#v\n",matches)
-                fmt.Printf("%#v\n",pos_tag)
-                fmt.Printf("%#v\n",returnTags)
+                // fmt.Printf("%#v\n",matches)
+                // fmt.Printf("%#v\n",pos_tag)
+                // fmt.Printf("%#v\n",returnTags)
                 fmt.Printf("%#v\n",chunk_tag)
                 fmt.Printf("%#v\n",chunkTags)
                 fmt.Printf("===============\n")

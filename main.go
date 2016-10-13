@@ -33,9 +33,9 @@ func WalkCorpora() {
 func main() {
 	//ReadBrown()
 	//runPOSTests()
-	// RunHMMChunkerTests()
+	RunHMMChunkerTests()
 	// ReadCONLL()
-	fmt.Printf("%#v",generateLMSentence())
+	// fmt.Printf("%#v",generateLMSentence())
 	// randomChunkWalk()
 	//getFrequencyAggregation("wordPosgram")
 	//fmt.Printf("%#v",viterbi("My name is Sahil"))
