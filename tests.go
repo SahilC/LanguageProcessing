@@ -32,8 +32,9 @@ func runPOSTests() {
                     posTags = append(posTags,temp[len(temp)-1])
                 }
                 //fmt.Printf("%#v\n",i)
-                returnTags := getPOSTags(strings.Join(sentence[1:len(sentence)-1]," "))
-                fmt.Printf("%s\n%#v\n%#v\n=====================\n",strings.Join(sentence," "),returnTags,posTags)
+                // returnTags := getPOSTags(strings.Join(sentence[1:len(sentence)-1]," "))
+                getPOSTags(strings.Join(sentence[1:len(sentence)-1]," "))
+                // fmt.Printf("%s\n%#v\n%#v\n=====================\n",strings.Join(sentence," "),returnTags,posTags)
             }
         }
     }
@@ -61,8 +62,8 @@ func RunHMMChunkerTests() {
                 returnTags := getPOSTags(strings.Join(matches," "))
                 chunkTags := getChunkTags(matches,returnTags)
                 // fmt.Printf("%#v\n",matches)
-                // fmt.Printf("%#v\n",pos_tag)
-                // fmt.Printf("%#v\n",returnTags)
+                fmt.Printf("%#v\n",pos_tag)
+                fmt.Printf("%#v\n",returnTags)
                 fmt.Printf("%#v\n",chunk_tag)
                 fmt.Printf("%#v\n",chunkTags)
                 fmt.Printf("===============\n")

@@ -1,7 +1,7 @@
 package main
 
 import (
-		"fmt"
+		// "fmt"
 		"strings"
 		"io/ioutil"
 		"sort"
@@ -74,8 +74,6 @@ func randomWalk(tokens [][]string) {
 						}
 					}
 					count += 1
-					fmt.Printf("%d. ",n)
-					fmt.Printf(sentence+"\n")
 					if(count > 5) {
 						count = 0
 						break
@@ -99,7 +97,7 @@ func randomChunkWalk() []string {
 	for len(sentence) < 10 {
 		sentence = append(sentence,tag)
 		results:= getNSomeNgram(tag,"chunkngram")
-		fmt.Printf("%d %d\n",len(results),rand.Intn(len(results)))
+		//fmt.Printf("%d %d\n",len(results),rand.Intn(len(results)))
 		result := results[0]
 		temp := strings.Split(result.Ngram," ")
 		tag = temp[1]
@@ -111,9 +109,9 @@ func generateLMSentence() []string {
 	sequence := randomChunkWalk()
 	previous_word := "<\\\\s>"
 	sentence := make([]string,0)
-	fmt.Printf("%#v",sequence)
+	// fmt.Printf("%#v",sequence)
 	for _,i := range sequence {
-		fmt.Printf("%s\n",i+" "+previous_word)
+		// fmt.Printf("%s\n",i+" "+previous_word)
 		// temp := getNSomeNgram(i+" "+previous_word,"wordChunkgrams")
 		temp := getNSomeNgram(i+" "+previous_word,"wordChunkgrams")
 		if(len(temp) > 0) {
@@ -144,17 +142,17 @@ func estimateEndProbabilities(tokens [][]string) {
 	for n := 1; n<= 6; n++ {
 		var count int = 0
 		ngrams = append(ngrams,buildNGram(tokens,n))
-		for k,v := range ngrams[n-1] {
+		for k,_ := range ngrams[n-1] {
 			var temp = strings.Split(k," ")
 			if(strings.EqualFold(temp[len(temp)-1],"<\\s>" )) {
 				count += 1
-				if(n > 1) {
-					var gramCount = ngrams[n-2][strings.Join(temp[:len(temp)-1]," ")]
-					fmt.Printf("%s %d:%d\n",strings.Join(temp[:len(temp)-1]," "),v,gramCount)
-				}
+				// if(n > 1) {
+				// 	var gramCount = ngrams[n-2][strings.Join(temp[:len(temp)-1]," ")]
+				// 	//fmt.Printf("%s %d:%d\n",strings.Join(temp[:len(temp)-1]," "),v,gramCount)
+				// }
 			}
 		}
-		fmt.Printf("Count: %d",count);
+		//fmt.Printf("Count: %d",count);
 	}
 }
 
