@@ -173,7 +173,7 @@ func processEmission(word string,posTag string,unseen_prob float64,chunkUnigrams
         }
         if(change) {
             next[idx] = unseen_prob*previous[idx]
-            fmt.Printf("%0.2f=====\n",unseen_prob)
+            fmt.Printf("%0.9f=====\n",unseen_prob)
             // next[idx] = 0.0
         }
     }
@@ -197,7 +197,7 @@ func processTransition(tag string,tag_count int,val float64,unseen_prob float64,
                 i += 1
                 //next[idx] = math.Min(math.Log(float64(j.Count)) - math.Log(float64(k.Count)) - math.Log(val),previous[idx])
                 next[idx] = math.Max(float64(k.Count)*val/float64(tag_count),previous[idx])
-                // fmt.Printf("%0.2f\n",val)
+                // fmt.Printf("%0.10f\n",val)
                 change = false
             }
         }
@@ -207,7 +207,7 @@ func processTransition(tag string,tag_count int,val float64,unseen_prob float64,
             // fmt.Printf("_++++++++++++++++%0.2f\n",next[idx])
         }
     }
-    // fmt.Printf("Transition:%v\n",next)
+    fmt.Printf("Transition:%v\n",next)
     return next
 }
 
@@ -287,8 +287,8 @@ func getChunkTags(tokens []string,posTags []string) []string {
     // to-do change this to a dynamic query for total
     // unseen_tag_prob := getPOSUnseen("posTags",1045943)
     //unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
-    unseen_word_prob := getPOSUnseen("chunkgrams",187939000)
-    unseen_tag_prob := getPOSUnseen("chunkngram",183811000)
+    unseen_word_prob := getPOSUnseen("chunkgrams",1879390000)
+    unseen_tag_prob := getPOSUnseen("chunkngram",1838110000)
     // unseen_tag_prob :=  0.0
     // unseen_tag_prob := getPOSUnseen("chunkgrams",187939)
     //unseen_word_prob := 0.0
@@ -298,7 +298,7 @@ func getChunkTags(tokens []string,posTags []string) []string {
             previous[idx] = float64(count)/float64(initial_tag_count)
             //previous[idx] = float64(count)/float64(j.Count)
         }
-        fmt.Printf("Previous:%#v\n",previous)
+        // fmt.Printf("Previous:%#v\n",previous)
         printTags(values)
         previous = processEmission(tokens[0],posTags[0],unseen_word_prob, values,previous)
         chunkTags = append(chunkTags,getMaxChunkTag(values,previous))
