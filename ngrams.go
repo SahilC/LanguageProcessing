@@ -7,6 +7,8 @@ import (
 		"sort"
 		"regexp"
 		"strconv"
+		"time"
+		"math/rand"
 		"github.com/gonum/plot"
 		"github.com/gonum/plot/vg"
 		"github.com/gonum/plot/plotter"
@@ -83,14 +85,23 @@ func randomWalk(tokens [][]string) {
 		}
 	}
 }
-
+func quickHackMin(x int,y int) int{
+	if(x<y) {
+		return x
+	} else {
+		return y
+	}
+}
 func randomChunkWalk() []string {
 	tag := "start_chunk"
 	sentence := make([]string,0)
+	rand.Seed(time.Now().UTC().UnixNano())
 	for len(sentence) < 10 {
 		sentence = append(sentence,tag)
-		results:= getSomeNgram(tag,"chunkngram")
-		temp := strings.Split(results.Ngram," ")
+		results:= getNSomeNgram(tag,"chunkngram")
+		fmt.Printf("%d %d\n",len(results),rand.Intn(len(results)))
+		result := results[0]
+		temp := strings.Split(result.Ngram," ")
 		tag = temp[1]
 	}
 	return sentence
@@ -100,11 +111,19 @@ func generateLMSentence() []string {
 	sequence := randomChunkWalk()
 	previous_word := "<\\\\s>"
 	sentence := make([]string,0)
+	fmt.Printf("%#v",sequence)
 	for _,i := range sequence {
-		sentence = append(sentence,previous_word)
-		temp := getSomeNgram(i+" "+previous_word,"wordChunkgrams")
-		temp2 := strings.Split(temp.Ngram," ")
-		previous_word = temp2[2]
+		fmt.Printf("%s\n",i+" "+previous_word)
+		// temp := getNSomeNgram(i+" "+previous_word,"wordChunkgrams")
+		temp := getNSomeNgram(i+" "+previous_word,"wordChunkgrams")
+		if(len(temp) > 0) {
+			result := temp[rand.Intn(len(temp))]
+			temp2 := strings.Split(result.Ngram," ")
+			if(len(temp2) > 2) {
+				previous_word = temp2[2]
+			}
+			sentence = append(sentence,previous_word)
+		}
 	}
 	return sentence
 }

@@ -35,7 +35,7 @@ func main() {
 	//runPOSTests()
 	// RunHMMChunkerTests()
 	// ReadCONLL()
-	generateLMSentence()
+	fmt.Printf("%#v",generateLMSentence())
 	// randomChunkWalk()
 	//getFrequencyAggregation("wordPosgram")
 	//fmt.Printf("%#v",viterbi("My name is Sahil"))
