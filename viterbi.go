@@ -170,7 +170,7 @@ func processEmission(word string,posTag string,unseen_prob float64,chunkUnigrams
             }
         }
     }
-    fmt.Printf("Emission:%v\n",next)
+    // fmt.Printf("Emission:%v\n",next)
     return next
 }
 
@@ -197,6 +197,7 @@ func processTransition(tag string,tag_count int,val float64,unseen_prob float64,
         }
         if(change) {
             next[idx] = math.Max(unseen_prob,previous[idx])
+            // fmt.Printf("_++++++++++++++++%0.2f\n",next[idx])
         }
     }
     // fmt.Printf("Transition:%v\n",next)
@@ -267,7 +268,7 @@ func getChunkTags(tokens []string,posTags []string) []string {
     // unseen_tag_prob := getPOSUnseen("posTags",1045943)
     //unseen_word_prob := getPOSUnseen("wordPosgram",1101375)
     unseen_word_prob := 0.0
-    unseen_tag_prob := 0.0
+    unseen_tag_prob := getPOSUnseen("chunkgrams",187939)
     //unseen_word_prob := 0.0
     if(len(tokens) == len(posTags)) {
         for idx,j := range values {
@@ -287,7 +288,7 @@ func getChunkTags(tokens []string,posTags []string) []string {
 
             next = processEmission(tokens[i+1],posTags[i+1],unseen_word_prob, values,next)
             chunkTags = append(chunkTags,getMaxChunkTag(values,next))
-            fmt.Printf("CHUNK:%s\n",getMaxChunkTag(values,next))
+            // fmt.Printf("CHUNK:%s\n",getMaxChunkTag(values,next))
             previous = next
             next = make([]float64,22)
         }
