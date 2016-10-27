@@ -23,6 +23,24 @@ import (
 //
 //     return grammar
 // }
+func removeDuplicates(elements []string) []string {
+    // Use map to record duplicates as we find them.
+    encountered := map[string]bool{}
+    result := []string{}
+
+    for v := range elements {
+    	if encountered[elements[v]] == true {
+    	    // Do not add duplicate.
+    	} else {
+    	    // Record this element as an encountered element.
+    	    encountered[elements[v]] = true
+    	    // Append to result slice.
+    	    result = append(result, elements[v])
+    	}
+    }
+    // Return the new slice.
+    return result
+}
 
 func get_grammar() map[string] (map[string] float64) {
     grammar := map[string] map[string] float64 {}
@@ -59,14 +77,12 @@ func get_combinations(grammar map[string] map[string] float64,left []string,righ
     temp := make([]string,0)
     for _,i := range left {
         for _,j := range right {
-            //fmt.Printf("%#v=============\n",i+ " "+j)
-            //fmt.Printf("%#v=============\n",i +" "+j)
             for k := range grammar[i +" "+j] {
                 temp = append(temp,k)
             }
         }
     }
-    //fmt.Printf("%#v\n",temp)
+    //fmt.Printf("%#v============\n",temp)
     return temp
 }
 
@@ -87,14 +103,27 @@ func parser(tokens []string) {
         cyk_grid[i] = make([][]string,0)
         for j:=0;j< len(tokens) - i;j++ {
             //cyk_grid[i] = append(cyk_grid[i],tokens[j])
-            //fmt.Printf("%#v %d %d\n",cyk_grid,i-1,j)
-            val := get_combinations(grammar,cyk_grid[i-1][j],cyk_grid[0][i+j])
-            cyk_grid[i] = append(cyk_grid[i],val)
-
-            if(i > 2) {
-                val = get_combinations(grammar,cyk_grid[0][j],cyk_grid[i-1][j+1])
-                cyk_grid[i] = append(cyk_grid[i],val)
+            val := make([]string,0)
+            // fmt.Printf("(%d %d) (%d %d) (%d %d) (%d %d)\n",i-1,j,0,i+j,0,j,i-1,j+1)
+            temp := get_combinations(grammar,cyk_grid[i-1][j],cyk_grid[0][i+j])
+            for _,k := range temp {
+                val = append(val,k)
             }
+            // if(len(val) > 0) {
+            //     cyk_grid[i] = append(cyk_grid[i],val)
+            // }
+            // fmt.Printf("%#v\n",val)
+            if(i > 1) {
+                // fmt.Printf("%#v %#v %#v %#v\n",cyk_grid[i-1][j],cyk_grid[0][i+j],cyk_grid[0][j],cyk_grid[i-1][j+1])
+                temp2 := get_combinations(grammar,cyk_grid[0][j],cyk_grid[i-1][j+1])
+                //cyk_grid[i] = append(cyk_grid[i],val)
+                for _,k := range temp2 {
+                    val = append(val,k)
+                }
+                val = removeDuplicates(val)
+                // fmt.Printf("%#v*****************\n",val)
+            }
+            cyk_grid[i] = append(cyk_grid[i],val)
             // fmt.Printf("(((%d %d),",i-1,j)
             // fmt.Printf("(%d %d)),",0, i + j)
             // fmt.Printf("((%d %d),",0,j)
@@ -102,5 +131,7 @@ func parser(tokens []string) {
         }
         //fmt.Printf("\n")
     }
-    fmt.Printf("%#v\n",cyk_grid)
+    // for _,i := range cyk_grid {
+    //     fmt.Printf("%#v\n",i)
+    // }
 }
