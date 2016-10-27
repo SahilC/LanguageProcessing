@@ -9,7 +9,6 @@ func getGrammar() map[string] (map[string] float64) {
     grammar["S"] = make(map[string] float64)
     grammar["S"] = temp
 
-    fmt.Printf("WHLLOOO")
     temp = make(map[string] float64,0)
     temp["P NP"] = 1.0
     grammar["PP"] = temp
