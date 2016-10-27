@@ -31,9 +31,11 @@ func WalkCorpora() {
 }
 
 func main() {
+	tokens := []string {"I","am","awesome"}
+	parser(tokens)
 	//ReadBrown()
 	//runPOSTests()
-	RunHMMChunkerTests()
+	//RunHMMChunkerTests()
 	// ReadCONLL()
 	// fmt.Printf("%#v",generateLMSentence())
 	// randomChunkWalk()
