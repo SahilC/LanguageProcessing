@@ -31,7 +31,7 @@ func WalkCorpora() {
 }
 
 func main() {
-	tokens := []string {"NP","VP","VP","PP"}
+	tokens := []string {"b","a","a","b","a"}
 	parser(tokens)
 	//ReadBrown()
 	//runPOSTests()
