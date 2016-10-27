@@ -25,10 +25,24 @@ func getGrammar() map[string] (map[string] float64) {
 }
 
 func parser(tokens []string) {
-    cyk_grid := make([][]string,len(tokens))
-    for i,_ := range tokens {
-        cyk_grid[0] = append(cyk_grid[0],tokens[i])
+    //cyk_grid := make([][]string,len(tokens))
+    // for i,_ := range tokens {
+    //     cyk_grid[0] = append(cyk_grid[0],tokens[i])
+    // }
+    //grammar := getGrammar()
+
+    //fmt.Printf("%#v\n%#v\n",cyk_grid,grammar)
+    for i:=0; i<len(tokens);i++ {
+        for j:=0;j< len(tokens) - i;j++ {
+            //cyk_grid[i] = append(cyk_grid[i],tokens[j])
+            if(i >= 1) {
+                fmt.Printf("(((%d %d),",i-1,j)
+                fmt.Printf("(%d %d)),",0, i + j)
+                fmt.Printf("((%d %d),",0,j)
+                fmt.Printf("(%d %d))),",i-1,j+1)
+            }
+        }
+        fmt.Printf("\n")
     }
-    grammar := getGrammar()
-    fmt.Printf("%#v\n%#v\n",cyk_grid,grammar)
+    //fmt.Printf("%#v\n",cyk_grid)
 }
