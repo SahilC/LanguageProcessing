@@ -1,6 +1,7 @@
 package main
 import (
     "fmt"
+    "math"
 )
 
 func get_grammar() map[string] (map[string] float64) {
@@ -47,6 +48,7 @@ func get_grammar() map[string] (map[string] float64) {
 
     temp = make(map[string] float64)
     temp["S"] = 0.05
+    temp["VP"] = 0.5
     grammar["V NP"] = make(map[string] float64)
     grammar["V NP"] = temp
 
@@ -102,10 +104,9 @@ func get_grammar() map[string] (map[string] float64) {
     grammar["money"] = make(map[string] float64)
     grammar["money"] = temp
 
-    temp = make(map[string] float64)
-    temp["VP"] = 0.5
-    grammar["V NP"] = make(map[string] float64)
-    grammar["V NP"] = temp
+    // temp = make(map[string] float64)
+    // grammar["V NP"] = make(map[string] float64)
+    // grammar["V NP"] = temp
 
     temp = make(map[string] float64)
     temp["VP"] = 0.3
@@ -118,12 +119,12 @@ func get_grammar() map[string] (map[string] float64) {
     grammar["Prep NP"] = temp
 
     temp = make(map[string] float64)
-    temp["Prep"] = 0.075
+    temp["Prep"] = 0.5
     grammar["with"] = make(map[string] float64)
     grammar["with"] = temp
 
     temp = make(map[string] float64)
-    temp["Prep"] = 0.075
+    temp["Prep"] = 0.5
     grammar["at"] = make(map[string] float64)
     grammar["at"] = temp
 
@@ -181,7 +182,13 @@ func get_combinations(grammar map[string] map[string] float64,cyk_grid [][][]str
         for _,j := range cyk_grid[0][a+b] {
             for k := range grammar[i +" "+j] {
                 temp = append(temp,k)
-                temp_prob[k] = grammar[i +" "+j][k]*cyk_prob_grid[a-1][b][i]*cyk_prob_grid[0][a+b][j]
+                if(temp_prob[k] > 0.0) {
+                    // fmt.Printf("*********%s %s %s %0.3f %0.3f %0.4f\n",k,i,j,grammar[i +" "+j][k],cyk_prob_grid[a-1][b][i],cyk_prob_grid[0][a+b][j])
+                    temp_prob[k] = math.Max(temp_prob[k],grammar[i +" "+j][k]*cyk_prob_grid[a-1][b][i]*cyk_prob_grid[0][a+b][j])
+                } else {
+                    // fmt.Printf("---------%s %s %s %0.3f %0.3f %0.4f\n",k,i,j,grammar[i +" "+j][k],cyk_prob_grid[a-1][b][i],cyk_prob_grid[0][a+b][j])
+                    temp_prob[k] = grammar[i +" "+j][k]*cyk_prob_grid[a-1][b][i]*cyk_prob_grid[0][a+b][j]
+                }
             }
         }
     }
@@ -191,7 +198,13 @@ func get_combinations(grammar map[string] map[string] float64,cyk_grid [][][]str
             for _,j := range cyk_grid[a-1][b+1] {
                 for k := range grammar[i +" "+j] {
                     temp = append(temp,k)
-                    temp_prob[k] = grammar[i +" "+j][k]*cyk_prob_grid[0][b][i]*cyk_prob_grid[a-1][b+1][j]
+                    if(temp_prob[k] > 0.0) {
+                        // fmt.Printf("------------------%s %s %s %0.3f %0.3f %0.4f\n",k,i,j,grammar[i +" "+j][k],cyk_prob_grid[0][b][i],cyk_prob_grid[a-1][b+1][j])
+                        temp_prob[k] = math.Max(temp_prob[k],grammar[i +" "+j][k]*cyk_prob_grid[0][b][i]*cyk_prob_grid[a-1][b+1][j])
+                    } else {
+                        // fmt.Printf("*******************%s %s %s %0.3f %0.3f %0.4f\n",k,i,j,grammar[i +" "+j][k],cyk_prob_grid[0][b][i],cyk_prob_grid[a-1][b+1][j])
+                        temp_prob[k] = grammar[i +" "+j][k]*cyk_prob_grid[0][b][i]*cyk_prob_grid[a-1][b+1][j]
+                    }
                 }
             }
         }
