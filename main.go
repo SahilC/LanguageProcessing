@@ -31,7 +31,8 @@ func WalkCorpora() {
 }
 
 func main() {
-	tokens := []string {"book","flight","with","money"}
+	//tokens := []string {"book","flight","with","money"}
+	tokens := []string {"NP","VP"}
 	cyk_parser(tokens)
 	//ReadBrown()
 	//runPOSTests()

@@ -183,10 +183,8 @@ func get_combinations(grammar map[string] map[string] float64,cyk_grid [][][]str
             for k := range grammar[i +" "+j] {
                 temp = append(temp,k)
                 if(temp_prob[k] > 0.0) {
-                    // fmt.Printf("*********%s %s %s %0.3f %0.3f %0.4f\n",k,i,j,grammar[i +" "+j][k],cyk_prob_grid[a-1][b][i],cyk_prob_grid[0][a+b][j])
                     temp_prob[k] = math.Max(temp_prob[k],grammar[i +" "+j][k]*cyk_prob_grid[a-1][b][i]*cyk_prob_grid[0][a+b][j])
                 } else {
-                    // fmt.Printf("---------%s %s %s %0.3f %0.3f %0.4f\n",k,i,j,grammar[i +" "+j][k],cyk_prob_grid[a-1][b][i],cyk_prob_grid[0][a+b][j])
                     temp_prob[k] = grammar[i +" "+j][k]*cyk_prob_grid[a-1][b][i]*cyk_prob_grid[0][a+b][j]
                 }
             }
@@ -199,10 +197,8 @@ func get_combinations(grammar map[string] map[string] float64,cyk_grid [][][]str
                 for k := range grammar[i +" "+j] {
                     temp = append(temp,k)
                     if(temp_prob[k] > 0.0) {
-                        // fmt.Printf("------------------%s %s %s %0.3f %0.3f %0.4f\n",k,i,j,grammar[i +" "+j][k],cyk_prob_grid[0][b][i],cyk_prob_grid[a-1][b+1][j])
                         temp_prob[k] = math.Max(temp_prob[k],grammar[i +" "+j][k]*cyk_prob_grid[0][b][i]*cyk_prob_grid[a-1][b+1][j])
                     } else {
-                        // fmt.Printf("*******************%s %s %s %0.3f %0.3f %0.4f\n",k,i,j,grammar[i +" "+j][k],cyk_prob_grid[0][b][i],cyk_prob_grid[a-1][b+1][j])
                         temp_prob[k] = grammar[i +" "+j][k]*cyk_prob_grid[0][b][i]*cyk_prob_grid[a-1][b+1][j]
                     }
                 }
@@ -231,20 +227,8 @@ func cyk_parser(tokens []string) {
 
     for i:= 1; i<len(tokens);i++ {
         cyk_grid[i] = make([][]string,0)
-        //cyk_prob_grid[i] = make([]map[string] float64,0)
         for j:=0;j< len(tokens) - i;j++ {
-            //val := make([]string,0)
             val := get_combinations(grammar,cyk_grid,cyk_prob_grid,i,j)
-            // for _,k := range temp {
-            //     val = append(val,k)
-            // }
-            // if(i > 1) {
-            //     temp2 := get_combinations(grammar,cyk_grid[0][j],cyk_grid[i-1][j+1])
-            //     for _,k := range temp2 {
-            //         val = append(val,k)
-            //     }
-            //     val = removeDuplicates(val)
-            // }
             cyk_grid[i] = append(cyk_grid[i],val)
         }
     }
